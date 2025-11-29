@@ -5,6 +5,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import mongoose from "mongoose";
+import { ObjectId } from "mongodb";
 
 
 // creates new items
@@ -84,5 +85,94 @@ export async function PUT(request) {
       { error: "Failed to update note" },
       { status: 500 }
     );
+  }
+}
+
+
+export async function PATCH(request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+  try {
+    const { id, archived } = await request.json();
+    if (!id) return NextResponse.json({ error: "Note ID is required" }, { status: 400 });
+
+    await connectToDB();
+
+    // Convert both _id and userId to ObjectId
+    const noteId = new mongoose.Types.ObjectId(id);
+    const userId = new mongoose.Types.ObjectId(session.user.id);
+
+    // Better boolean conversion
+    let archivedBoolean;
+    if (typeof archived === 'boolean') {
+      archivedBoolean = archived;
+    } else if (typeof archived === 'string') {
+      archivedBoolean = archived.toLowerCase() === 'true';
+    } else {
+      archivedBoolean = Boolean(archived);
+    }
+
+    console.log("Updating note:", { 
+      _id: noteId, 
+      userId, 
+      archived: archivedBoolean,
+      originalArchived: archived,
+      typeOfArchived: typeof archived
+    });
+
+    const updatedNote = await Notes.findOneAndUpdate(
+      { _id: noteId, userId },
+      { $set: { archived: archivedBoolean } },
+      { new: true }
+    );
+
+    if (!updatedNote)
+      return NextResponse.json({ error: "Note not found or not authorized" }, { status: 404 });
+
+    return NextResponse.json({
+      msg: archivedBoolean ? "Note archived successfully" : "Note restored successfully",
+      note: updatedNote,
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error("PATCH error:", error);
+    return NextResponse.json({ error: error.message || "Failed to update note" }, { status: 500 });
+  }
+}
+
+export async function DELETE(request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  try {
+    const { id } = await request.json();
+
+    if (!id) {
+      return NextResponse.json({ error: "Note ID is required" }, { status: 400 });
+    }
+
+    await connectToDB();
+
+    const deleted = await Notes.findOneAndDelete({
+      _id: id,
+      userId: session.user.id,
+    });
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Note not found or not authorized" }, { status: 404 });
+    }
+
+    return NextResponse.json(
+      { msg: "Note deleted successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("DELETE error:", error);
+    return NextResponse.json({ error: "Failed to delete note" }, { status: 500 });
   }
 }

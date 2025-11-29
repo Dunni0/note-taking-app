@@ -5,6 +5,7 @@ const notesSchema = new mongoose.Schema({
     tag: {type: String, required: true},
     note: {type: String, required: true},
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true }, // 👈 link to user
+    archived: { type: Boolean, default: false },
 }, { timestamps: true });
 
 

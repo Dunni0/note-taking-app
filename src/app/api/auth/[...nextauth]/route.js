@@ -2,6 +2,7 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@next-auth/mongodb-adapter";
 import clientPromise from "../../../../../lib/mongoClient";
+import connectToDB from "../../../../../lib/db"; // <-- import your db connection helper
 import User from "../../../../../models/Users";
 import bcrypt from "bcrypt";
 
@@ -18,6 +19,9 @@ export const authOptions = {
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
+        // ✅ Ensure the DB connection is ready before querying
+        await connectToDB();
+
         const user = await User.findOne({ email: credentials.email });
         if (!user) throw new Error("No user found");
 
@@ -27,29 +31,21 @@ export const authOptions = {
         );
         if (!isValid) throw new Error("Invalid credentials");
 
-        // The returned `id` is what's used in the JWT and session.
-        // It must be a string.
         return {
-          _id: user._id, 
-          id: user._id.toString(), // <-- Return the _id as a string for the 'id' field
-          email: user.email 
+          _id: user._id,
+          id: user._id.toString(),
+          email: user.email,
         };
       },
     }),
   ],
   callbacks: {
     async jwt({ token, user }) {
-      if (user) {
-        // Ensure the token's ID is the string representation of the _id
-        token.id = user.id; 
-      }
+      if (user) token.id = user.id;
       return token;
-    },    
+    },
     async session({ session, token }) {
-      if (token?.id) {
-        // Assign the correct string ID to the session
-        session.user.id = token.id;
-      }
+      if (token?.id) session.user.id = token.id;
       return session;
     },
   },
@@ -60,5 +56,4 @@ export const authOptions = {
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

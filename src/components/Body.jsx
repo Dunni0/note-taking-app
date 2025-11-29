@@ -1,183 +1,604 @@
+// "use client";
+// import { useState, useEffect } from "react";
+// import TaskEmpty from "../assets/TaskEmpty.jsx";
+// import { ClockIcon, TagIcon } from "@heroicons/react/24/outline";
+// import { NoteActions } from "./NoteActions.jsx";
+
+// export const Body = ({ activeView, notes, refreshNotes, user }) => {
+//   const [title, setTitle] = useState("");
+//   const [tag, setTag] = useState("");
+//   const [note, setNote] = useState("");
+//   const [isClickCreateNote, setIsClickCreateNote] = useState(false);
+
+//   const [selectedNote, setSelectedNote] = useState(null);
+
+//   const handleNoteClick = (noteItem) => {
+//     setSelectedNote(noteItem);
+//     setTitle(noteItem.title);
+//     setTag(noteItem.tag);
+//     setNote(noteItem.note);
+//     setIsClickCreateNote(true);
+//   };
+
+//   const saveNotes = async (e) => {
+//     e.preventDefault();
+
+//     const method = selectedNote ? "PUT" : "POST";
+//     const bodyData = selectedNote
+//       ? { id: selectedNote._id, title, tag, note, userId: user?.user?.id } // PUT
+//       : { title, tag, note, userId: user?.user?.id };
+//     console.log(bodyData, "body data", selectedNote);
+//     try {
+//       const res = await fetch(`http://localhost:3000/api/notes`, {
+//         method,
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify(bodyData),
+//       });
+//       if (res.ok) {
+//         console.log("You have successfully added a note!");
+//         setSelectedNote(null);
+//         setTitle("");
+//         setTag("");
+//         setNote("");
+//         await refreshNotes();
+//         // setIsClickCreateNote(false);
+//       } else {
+//         throw new Error("Error occurred while creating new item");
+//       }
+//     } catch (error) {
+//       console.log("Error: ", error);
+//     }
+//   };
+
+//   const selectedTag = activeView?.startsWith("tag:")
+//     ? activeView.split(":")[1]
+//     : null;
+
+//   const filteredNotes = selectedTag
+//     ? notes.filter((note) => note.tag === selectedTag)
+//     : notes;
+
+//   return (
+//     <div className="flex h-[89vh]">
+//       <div className="w-72 p-4 border-r-1 border-gray-300 h-h-[89vh] overflow-y-scroll">
+//         <button
+//           onClick={() => {
+//             setIsClickCreateNote(true);
+//             setSelectedNote(null);  
+//             setTitle("");           
+//             setTag("");              
+//             setNote("");             
+//           }}
+//           className="hover:bg-blue-700 text-white w-full py-3 rounded-lg font-bold cursor-pointer bg-blue-600"
+//         >
+//           + Create New Note
+//         </button>
+//         {activeView === "archivedNotes" && (
+//           <div className="bg-neutral-100 border border-neutral-200 p-2 rounded-lg flex flex-col items-center justify-center gap-2 mt-3">
+//             <TaskEmpty className="w-16 h-16" />
+//             <p className="text-neutral-500 text-[12px] font-normal text-center">
+//               No notes have been archived yet. Move notes here for safekeeping,
+//               or create a new note.
+//             </p>
+//           </div>
+//         )}
+//         {filteredNotes.map((note) => (
+//           <div
+//             key={note._id}
+//             onClick={() => handleNoteClick(note)}
+//             className="p-2 hover:bg-neutral-100 cursor-pointer mt-2 flex flex-col gap-3"
+//           >
+//             <p className="text-[14px] font-[700]">{note.title}</p>
+//             <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
+//               {note.tag}
+//             </p>
+//             <p className="text-[14px]">30 June 2025</p>
+//           </div>
+//         ))}
+//       </div>
+
+//       <main className="flex-1 p-4">
+//         {isClickCreateNote ? (
+//           <form onSubmit={saveNotes}>
+//             <div className="border-b-1 border-gray-300 pb-6">
+//               <input
+//                 type="text"
+//                 placeholder="Enter a title..."
+//                 value={title}
+//                 onChange={(e) => setTitle(e.target.value)}
+//                 className="w-full text-[2rem] outline-0 border-b-1 border-transparent focus:border-gray-200"
+//               />
+//               <div className="flex gap-[4rem] mt-8">
+//                 <div className="flex items-center gap-1">
+//                   <TagIcon className="w-5 h-5 stroke-2" />
+//                   <p className="text-neutral-700 text-sm font-[500]"> Tags </p>
+//                 </div>
+//                 <input
+//                   type="text"
+//                   value={tag}
+//                   onChange={(e) => setTag(e.target.value)}
+//                   placeholder="Add tags separated by commas (e.g. Work, Planning)"
+//                   className="font-[500] w-full text-[14px] outline-0 border-b-1 border-transparent focus:border-gray-200"
+//                 />
+//               </div>
+//               <div className="flex gap-[1.5rem] mt-3">
+//                 <div className="flex items-center gap-1">
+//                   <ClockIcon className="w-5 h-5 stroke-2" />
+//                   <p className="text-neutral-700 text-sm font-[500]">
+//                     Last edited
+//                   </p>
+//                 </div>
+//                 <input
+//                   type="text"
+//                   disabled
+//                   size={46}
+//                   className="text-sm placeholder:text-sm disabled:bg-transparent"
+//                   placeholder="Not yet saved"
+//                 />
+//               </div>
+//             </div>
+//             <textarea
+//               value={note}
+//               onChange={(e) => setNote(e.target.value)}
+//               placeholder="Start typing your note here..."
+//               className="w-full mt-3 mb-3 h-[22rem] resize-none focus:p-2 focus:border-1 focus:border-gray-300 focus:outline-none"
+//             />
+//             <div className="border-t-1 border-t-gray-300 pt-[1.5rem] flex gap-4">
+//               <button
+//                 type="submit"
+//                 className="bg-blue-700 text-white px-[14px] py-[12px] text-[14px] font-[500] rounded-sm hover:bg-blue-600"
+//               >
+//                 Save Note
+//               </button>
+//               <button
+//                 type="button"
+//                 onClick={() => setIsClickCreateNote(false)}
+//                 className="bg-gray-100 px-[14px] py-[12px] font-[500] text-[14px] rounded-sm"
+//               >
+//                 Cancel
+//               </button>
+//             </div>
+//           </form>
+//         ) : notes.length === 0 ? (
+//           <p className="text-center text-[14px] font-[500]">
+//             You don’t have any notes available in this tab. Start a new note to
+//             capture your thoughts and ideas.
+//           </p>
+//         ) : (
+//           <p className="text-center text-[14px] font-[500]">
+//             Select a note to view or edit it.
+//           </p>
+//         )}
+//       </main>
+
+//       <aside className="w-72 p-4 border-l-1 border-gray-300">
+//        {selectedNote &&
+//          <NoteActions activeView={activeView}/>
+//        }
+//       </aside>
+//     </div>
+//   );
+// };
+
+
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
 import TaskEmpty from "../assets/TaskEmpty.jsx";
 import { ClockIcon, TagIcon } from "@heroicons/react/24/outline";
 import { NoteActions } from "./NoteActions.jsx";
+import { ConfirmModal } from "@/modals/ConfirmModal.jsx";
+import { FaPlus } from "react-icons/fa";
 
-export const Body = ({ activeView, notes, refreshNotes, user }) => {
-  const [title, setTitle] = useState("");
-  const [tag, setTag] = useState("");
-  const [note, setNote] = useState("");
-  const [isClickCreateNote, setIsClickCreateNote] = useState(false);
+export const Body = forwardRef(
+  (
+    {
+      activeView,
+      notes,
+      user,
+      loading,
+      setActiveView,
+      searchQuery,
+      onFormStateChange,
+      refreshNotes
+    },
+    ref
+  ) => {
+    const [title, setTitle] = useState("");
+    const [tag, setTag] = useState("");
+    const [note, setNote] = useState("");
+    const [isClickCreateNote, setIsClickCreateNote] = useState(false);
+    const [selectedNote, setSelectedNote] = useState(null);
+    const [hasAutoSelected, setHasAutoSelected] = useState(false);
+    const [showEditor, setShowEditor] = useState(false);
 
-  const [selectedNote, setSelectedNote] = useState(null);
+    const effectiveNotes = loading ? [] : notes;
+    
+    useEffect(() => {
+      onFormStateChange?.(isClickCreateNote);
+    }, [isClickCreateNote, onFormStateChange]);
 
-  const handleNoteClick = (noteItem) => {
-    setSelectedNote(noteItem);
-    setTitle(noteItem.title);
-    setTag(noteItem.tag);
-    setNote(noteItem.note);
-    setIsClickCreateNote(true);
-  };
+    useEffect(() => {
+      if (activeView === "allNotes" || activeView === "archivedNotes") {
+        setShowEditor(false);
+        setIsClickCreateNote(false);
+        setSelectedNote(null);
+      }
+    }, [activeView]);
 
-  const saveNotes = async (e) => {
-    e.preventDefault();
-
-    const method = selectedNote ? "PUT" : "POST";
-    const bodyData = selectedNote
-      ? { id: selectedNote._id, title, tag, note, userId: user?.user?.id } // PUT
-      : { title, tag, note, userId: user?.user?.id };
-    console.log(bodyData, "body data", selectedNote);
-    try {
-      const res = await fetch(`http://localhost:3000/api/notes`, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(bodyData),
-      });
-      if (res.ok) {
-        console.log("You have successfully added a note!");
+    useImperativeHandle(ref, () => ({
+      openCreateNote: () => {
+        if (activeView === "archivedNotes") {
+          setActiveView("allNotes");
+        }
+        setIsClickCreateNote(true);
         setSelectedNote(null);
         setTitle("");
         setTag("");
         setNote("");
-        await refreshNotes();
-        // setIsClickCreateNote(false);
-      } else {
-        throw new Error("Error occurred while creating new item");
+        setShowEditor(true);
+      },
+    }));
+
+    const handleNoteClick = (noteItem) => {
+      setSelectedNote(noteItem);
+      setTitle(noteItem.title);
+      setTag(noteItem.tag);
+      setNote(noteItem.note);
+      setIsClickCreateNote(true);
+      setShowEditor(true);
+    };
+
+    const saveNotes = async (e) => {
+      e.preventDefault();
+
+      const method = selectedNote ? "PUT" : "POST";
+      const bodyData = selectedNote
+        ? { id: selectedNote._id, title, tag, note, userId: user?.user?.id }
+        : { title, tag, note, userId: user?.user?.id };
+
+      try {
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`,
+          {
+            method,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(bodyData),
+          }
+        );
+        if (res.ok) {
+          await refreshNotes();
+          setSelectedNote(null);
+          setTitle("");
+          setTag("");
+          setNote("");
+        } else {
+          throw new Error("Error occurred while creating new item");
+        }
+      } catch (error) {
+        console.log("Error: ", error);
       }
-    } catch (error) {
-      console.log("Error: ", error);
+    };
+
+    const selectedTag = activeView?.startsWith("tag:")
+      ? activeView.split(":")[1]
+      : null;
+
+    let filteredNotes = [];
+
+    if (activeView === "allNotes") {
+      filteredNotes = effectiveNotes.filter((note) => !note.archived);
+    } else if (activeView === "archivedNotes") {
+      filteredNotes = effectiveNotes.filter((note) => note.archived);
+    } else if (selectedTag) {
+      filteredNotes = effectiveNotes.filter(
+        (note) => note.tag === selectedTag && !note.archived
+      );
+    } else {
+      filteredNotes = effectiveNotes;
     }
-  };
 
-  const selectedTag = activeView?.startsWith("tag:")
-    ? activeView.split(":")[1]
-    : null;
+    if (searchQuery.trim() !== "") {
+      const query = searchQuery.toLowerCase();
+      filteredNotes = filteredNotes.filter(
+        (note) =>
+          note.title.toLowerCase().includes(query) ||
+          note.tag.toLowerCase().includes(query)
+      );
+    }
 
-  const filteredNotes = selectedTag
-    ? notes.filter((note) => note.tag === selectedTag)
-    : notes;
 
-  return (
-    <div className="flex h-[89vh]">
-      <div className="w-72 p-4 border-r-1 border-gray-300 h-h-[89vh] overflow-y-scroll">
-        <button
-          onClick={() => {
-            setIsClickCreateNote(true);
-            setSelectedNote(null);  
-            setTitle("");           
-            setTag("");              
-            setNote("");             
-          }}
-          className="hover:bg-blue-700 text-white w-full py-3 rounded-lg font-bold cursor-pointer bg-blue-600"
+    // Automatically open first archived note on XL screens
+    useEffect(() => {
+      if(loading) return;
+
+      if (activeView === "allNotes") {
+        setSelectedNote(null);
+        setTitle("");
+        setTag("");
+        setNote("");
+        setIsClickCreateNote(false);
+        setHasAutoSelected(false);
+        return;
+      }
+
+      if (activeView === "archivedNotes" && !hasAutoSelected) {
+        const archivedNotes = notes.filter((note) => note.archived);
+        if (archivedNotes.length > 0) {
+          const firstArchivedNote = archivedNotes[0];
+          setSelectedNote(firstArchivedNote);
+          setTitle(firstArchivedNote.title || "");
+          setTag(firstArchivedNote.tag || "");
+          setNote(firstArchivedNote.note || "");
+          setIsClickCreateNote(true);
+          setShowEditor(false);
+        } else {
+          setIsClickCreateNote(false);
+          setSelectedNote(null);
+          setTitle("");
+          setTag("");
+          setNote("");
+        }
+        setHasAutoSelected(true);
+      }
+    }, [activeView, hasAutoSelected, notes, loading]);
+    
+
+    return (
+      <div className="xl:flex h-full">
+        {/* Notes List Sidebar */}
+        <div
+          className={`w-full xl:w-72 border-0 xl:border-r border-gray-300 overflow-y-auto p-4
+          ${showEditor ? "hidden" : "block"} xl:block
+        `}
         >
-          + Create New Note
-        </button>
-        {activeView === "archivedNotes" && (
-          <div className="bg-neutral-100 border border-neutral-200 p-2 rounded-lg flex flex-col items-center justify-center gap-2 mt-3">
-            <TaskEmpty className="w-16 h-16" />
-            <p className="text-neutral-500 text-[12px] font-normal text-center">
-              No notes have been archived yet. Move notes here for safekeeping,
-              or create a new note.
-            </p>
-          </div>
-        )}
-        {filteredNotes.map((note) => (
-          <div
-            key={note._id}
-            onClick={() => handleNoteClick(note)}
-            className="p-2 hover:bg-neutral-100 cursor-pointer mt-2 flex flex-col gap-3"
-          >
-            <p className="text-[14px] font-[700]">{note.title}</p>
-            <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
-              {note.tag}
-            </p>
-            <p className="text-[14px]">30 June 2025</p>
-          </div>
-        ))}
-      </div>
+          {/* Show Create New Note button for allNotes AND tag views */}
+          {(activeView === "allNotes") && (
+            <button
+              onClick={() => {
+                setIsClickCreateNote(true);
+                setSelectedNote(null);
+                setTitle("");
+                setTag("");
+                setNote("");
+                setShowEditor(true);
+              }}
+              disabled={loading}
+              className={`hidden w-full md:block py-3 rounded-lg font-bold cursor-pointer 
+                ${
+                  loading
+                    ? "bg-blue-500 text-white cursor-not-allowed"
+                    : "bg-blue-600 hover:bg-blue-700 text-white"
+                }`}
+            >
+              + Create New Note
+            </button>
+          )}
 
-      <main className="flex-1 p-4">
-        {isClickCreateNote ? (
-          <form onSubmit={saveNotes}>
-            <div className="border-b-1 border-gray-300 pb-6">
-              <input
-                type="text"
-                placeholder="Enter a title..."
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full text-[2rem] outline-0 border-b-1 border-transparent focus:border-gray-200"
-              />
-              <div className="flex gap-[4rem] mt-8">
-                <div className="flex items-center gap-1">
-                  <TagIcon className="w-5 h-5 stroke-2" />
-                  <p className="text-neutral-700 text-sm font-[500]"> Tags </p>
-                </div>
-                <input
-                  type="text"
-                  value={tag}
-                  onChange={(e) => setTag(e.target.value)}
-                  placeholder="Add tags separated by commas (e.g. Work, Planning)"
-                  className="font-[500] w-full text-[14px] outline-0 border-b-1 border-transparent focus:border-gray-200"
-                />
+          {/* Archived Info */}
+          {activeView === "archivedNotes" &&
+            !loading &&
+            (filteredNotes.length === 0 ? (
+              <div className="bg-neutral-100 border border-neutral-200 p-2 rounded-lg flex flex-col items-center justify-center gap-2 mt-3">
+                <TaskEmpty className="w-16 h-16" />
+                <p className="text-neutral-500 text-[12px] font-normal text-center">
+                  No notes have been archived yet. Move notes here for
+                  safekeeping.
+                </p>
               </div>
-              <div className="flex gap-[1.5rem] mt-3">
-                <div className="flex items-center gap-1">
-                  <ClockIcon className="w-5 h-5 stroke-2" />
-                  <p className="text-neutral-700 text-sm font-[500]">
-                    Last edited
+            ) : (
+              <div className="text-neutral-600 text-[14px] font-bold text-center border-2 border-dashed border-neutral-300 p-3 rounded-sm mt-3 ">
+                <p>
+                  All your archived notes are stored here. You can restore or
+                  delete them anytime.
+                </p>
+              </div>
+            ))}
+
+          {/* Notes List */}
+          {loading ? (
+            <div className="flex flex-col gap-y-6">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="p-2 flex flex-col gap-2 animate-pulse">
+                  <div className="h-4 bg-neutral-200 rounded w-3/4"></div>
+                  <div className="h-3 bg-neutral-200 rounded w-1/3"></div>
+                  <div className="h-3 bg-neutral-200 rounded w-1/2"></div>
+                  <div className="h-3 bg-neutral-200 rounded w-1/2"></div>
+                </div>
+              ))}
+            </div>
+          ) : filteredNotes.length === 0 ? (
+            <p className="text-center text-neutral-500 mt-8">
+              {searchQuery ? `No notes found for "${searchQuery}"` : ""}
+            </p>
+          ) : (
+            <div className="flex flex-col flex-wrap gap-3 mb-14 md:mb-0">
+              {filteredNotes.map((note) => (
+                <div
+                  key={note._id}
+                  onClick={() => handleNoteClick(note)}
+                  className={`p-2 xl:w-[16rem] cursor-pointer mt-0 md:mt-2 flex flex-col gap-2 rounded-md transition-colors
+                  ${
+                    selectedNote?._id === note._id
+                      ? "xl:bg-neutral-100 hover:bg-neutral-100"
+                      : "hover:bg-neutral-100 active:bg-neutral-200"
+                  }`}
+                >
+                  <p className="text-[14px] font-[700] ">{note.title}</p>
+                  <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
+                    {note.tag}
+                  </p>
+                  <p className="text-[14px]">
+                    {new Date(note.updatedAt).toLocaleString()}
                   </p>
                 </div>
-                <input
-                  type="text"
-                  disabled
-                  size={46}
-                  className="text-sm placeholder:text-sm disabled:bg-transparent"
-                  placeholder="Not yet saved"
-                />
-              </div>
+              ))}
             </div>
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              placeholder="Start typing your note here..."
-              className="w-full mt-3 mb-3 h-[22rem] resize-none focus:p-2 focus:border-1 focus:border-gray-300 focus:outline-none"
-            />
-            <div className="border-t-1 border-t-gray-300 pt-[1.5rem] flex gap-4">
-              <button
-                type="submit"
-                className="bg-blue-700 text-white px-[14px] py-[12px] text-[14px] font-[500] rounded-sm hover:bg-blue-600"
-              >
-                Save Note
-              </button>
-              <button
-                type="button"
-                onClick={() => setIsClickCreateNote(false)}
-                className="bg-gray-100 px-[14px] py-[12px] font-[500] text-[14px] rounded-sm"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        ) : notes.length === 0 ? (
-          <p className="text-center text-[14px] font-[500]">
-            You don’t have any notes available in this tab. Start a new note to
-            capture your thoughts and ideas.
-          </p>
-        ) : (
-          <p className="text-center text-[14px] font-[500]">
-            Select a note to view or edit it.
-          </p>
-        )}
-      </main>
+          )}
+        </div>
 
-      <aside className="w-72 p-4 border-l-1 border-gray-300">
-       {selectedNote &&
-         <NoteActions activeView={activeView}/>
-       }
-      </aside>
-    </div>
-  );
-};
+        {/* Note Editor */}
+        <div
+          className={`flex-1 p-4 border-gray-300 xl:border-0 ${
+            showEditor ? "block" : "hidden"
+          } xl:block`}
+        >
+          {isClickCreateNote ? (
+            <form
+              onSubmit={saveNotes}
+              className={` ${!selectedNote ? "pb-18 md:pb-0" : ""}`}
+            >
+              <div className="border-b-1 border-gray-300">
+                {/* Back button for small screens */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedNote(null);
+                    setTitle("");
+                    setTag("");
+                    setNote("");
+                    setIsClickCreateNote(false);
+                    setShowEditor(false);
+                  }}
+                  className="xl:hidden cursor-pointer text-blue-600 mb-4 flex items-center gap-1 font-medium"
+                >
+                  ← Back to Notes
+                </button>
+
+                <input
+                  disabled={activeView === "archivedNotes"}
+                  type="text"
+                  placeholder="Enter a title..."
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full text-[2rem] outline-0 border-b-1 border-transparent focus:border-gray-200"
+                />
+                <div className="flex gap-[4rem] mt-8">
+                  <div className="flex items-center gap-1">
+                    <TagIcon className="w-5 h-5 stroke-2" />
+                    <p className="text-neutral-700 text-sm font-[500]">Tags</p>
+                  </div>
+                  <input
+                    disabled={activeView === "archivedNotes"}
+                    type="text"
+                    value={tag}
+                    onChange={(e) => setTag(e.target.value)}
+                    placeholder="Add tags separated by commas"
+                    className="font-[500] w-full text-[14px] outline-0 border-b-1 border-transparent focus:border-gray-200"
+                  />
+                </div>
+                <div className="flex gap-[1.5rem] mt-3">
+                  <div className="flex items-center gap-1">
+                    <ClockIcon className="w-5 h-5 stroke-2" />
+                    <p className="text-neutral-700 text-sm font-[500]">
+                      Last edited
+                    </p>
+                  </div>
+                  <input
+                    type="text"
+                    disabled
+                    size={46}
+                    className="text-sm disabled:bg-transparent"
+                    value={
+                      selectedNote?.updatedAt
+                        ? new Date(selectedNote.updatedAt).toLocaleString()
+                        : "Not yet saved"
+                    }
+                  />
+                </div>
+              </div>
+
+              <textarea
+                disabled={activeView === "archivedNotes"}
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                placeholder="Start typing your note here..."
+                className={`${
+                  activeView === "archivedNotes"
+                    ? "border-1 border-gray-300 p-2"
+                    : "focus:p-2 focus:border-1 focus:border-gray-300"
+                } w-full mt-3 mb-2 h-[22rem] resize-none focus:outline-none`}
+              />
+
+              <div className=" border-t-1 border-t-gray-200 pt-[1rem] flex gap-4">
+                <div className="max-w-2xs flex gap-4">
+                  {activeView === "allNotes" && (
+                    <button
+                      type="submit"
+                      onClick={() => {
+                        setShowEditor(false);
+                      }}
+                      className="bg-blue-700 font-bold cursor-pointer text-white px-[14px] py-[12px] text-[14px] rounded-sm hover:bg-blue-600"
+                    >
+                      Save Note
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedNote(null);
+                      setTitle("");
+                      setTag("");
+                      setNote("");
+                      setIsClickCreateNote(false);
+                      setShowEditor(false);
+                    }}
+                    className={`${
+                      activeView === "archivedNotes"
+                        ? "bg-blue-700 text-white"
+                        : "bg-gray-200"
+                    } font-bold px-[14px] py-[12px] text-[14px] rounded-sm cursor-pointer`}
+                  >
+                    {activeView === "archivedNotes" ? "Close" : "Cancel"}
+                  </button>
+                </div>
+              </div>
+            </form>
+          ) : (
+            !loading &&
+            (filteredNotes.length === 0 ? (
+              <p className="text-center text-[14px] text-gray-700 font-[600] hidden xl:block">
+                You don't have any notes available in this tab. Start a new note
+                to capture your thoughts and ideas.
+              </p>
+            ) : (
+              <p className="text-center text-[14px] text-gray-700 font-[600] hidden md:block">
+                Select a note to view or edit it.
+              </p>
+            ))
+          )}
+        </div>
+
+        {/* Actions (Right sidebar) */}
+        {selectedNote && (
+          <aside
+            className={`  ${
+              showEditor ? "block" : "hidden"
+            } xl:block xl:w-72 p-4 border-t border-l-0 xl:border-l-1 xl:border-t-0 border-gray-300 pb-20 md:pb-0`}
+          >
+            <NoteActions 
+              activeView={activeView} 
+              selectedNote={selectedNote} 
+              refreshNotes={refreshNotes}
+            />
+          </aside>
+        )}
+
+        <ConfirmModal
+          refreshNotes={refreshNotes}
+          onActionComplete={() => {
+            setSelectedNote(null);
+            setTitle("");
+            setTag("");
+            setNote("");
+            setIsClickCreateNote(false);
+            setShowEditor(false);
+          }}
+        />
+      </div>
+    );
+  }
+);

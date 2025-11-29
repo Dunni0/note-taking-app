@@ -1,37 +1,44 @@
 "use client";
 
+import { openConfirmModal } from "@/store/ConfirmModalSlice";
 import {
   ArchiveBoxArrowDownIcon,
-  ArchiveBoxXMarkIcon,
   ArrowPathIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import React from "react";
+import { useDispatch } from "react-redux";
 
-export const NoteActions = ({ activeView }) => {
+export const NoteActions = ({ activeView, selectedNote, refreshNotes }) => {
+  const dispatch = useDispatch();
+
+  const handleAction = (type) => {
+    if (!selectedNote?._id) return;
+    dispatch(openConfirmModal({ type, noteId: selectedNote._id }));
+  }
   return (
     <div className="flex flex-col items-start gap-4 py-5">
       {activeView === "archivedNotes" ? (
-        <button className="cursor-pointer flex items-center gap-2 border border-neutral-300  text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full  hover:bg-neutral-100 ">
+        <button 
+        onClick={() => handleAction('restore')}
+        className="cursor-pointer flex items-center gap-2 border border-neutral-300  text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full  hover:bg-neutral-100 ">
           <ArrowPathIcon className="w-5 h-5 stroke-neutral-950 " />
           <p>Restore Note</p>
         </button>
       ) : (
-        <button className="cursor-pointer flex items-center gap-2 border border-neutral-300  text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full  hover:bg-neutral-100">
+        <button 
+        onClick={() => handleAction('archive')}
+        className="cursor-pointer flex items-center gap-2 border border-neutral-300  text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full  hover:bg-neutral-100">
           <ArchiveBoxArrowDownIcon className="w-5 h-5 stroke-neutral-950 " />
           <p>Archive Note</p>
         </button>
       )}
-      <button className="cursor-pointer flex items-center gap-2 border border-neutral-300   text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full   hover:bg-neutral-100">
+      <button 
+      onClick={() => handleAction('delete')}
+      className="cursor-pointer flex items-center gap-2 border border-neutral-300   text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full   hover:bg-neutral-100">
         <TrashIcon className="w-5 h-5 stroke-neutral-950  " />
         <p>Delete Note</p>
       </button>
-      {activeView !== "archivedNotes" && (
-        <button className="flex items-center gap-2 border border-neutral-300   text-neutral-950 font-medium text-sm px-4 py-3 rounded-lg w-full   hover:bg-neutral-100">
-          <ArchiveBoxXMarkIcon className="w-5 h-5 stroke-neutral-950  " />
-          <p>Delete All Notes</p>
-        </button>
-      )}
     </div>
   );
 };
