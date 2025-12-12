@@ -5,15 +5,6 @@ import { SessionWrapper } from "@/components/SessionWrapper";
 import { ReduxProvider } from "@/providers/ReduxProvider";
 import { QueryProvider } from "@/providers/QueryProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
   title: "Note-Taking",
@@ -24,7 +15,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`bg-white ${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-white antialiased`}
       >
         <QueryProvider>
           <SessionWrapper>

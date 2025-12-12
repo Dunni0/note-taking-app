@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   open: false,
-  type: null,   // "delete" | "archive"
+  type: null,  
   noteId: null,
 };
 

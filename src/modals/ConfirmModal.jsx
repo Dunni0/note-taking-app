@@ -4,9 +4,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { closeConfirmModal } from "@/store/ConfirmModalSlice";
 import {
   ArchiveBoxArrowDownIcon,
+  ArrowLeftEndOnRectangleIcon,
   ArrowPathIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { signOut } from "next-auth/react";
 
 export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
   const dispatch = useDispatch();
@@ -48,15 +50,18 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: noteId, archived: false }),
         });
+      } else if (type === "logout") {
+        await signOut({ callbackUrl: "/login" });
+        return; // stop execution so modal doesn't run refreshNotes
       }
 
-      await refreshNotes();
       onActionComplete && onActionComplete();
     } catch (err) {
       console.error("Error:", err);
     } finally {
       setLoading(false);
       dispatch(closeConfirmModal());
+      refreshNotes && refreshNotes();
     }
   };
 
@@ -69,8 +74,10 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
               <TrashIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
             ) : type === "archive" ? (
               <ArchiveBoxArrowDownIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
-            ) : (
+            ) : type === "restore" ? (
               <ArrowPathIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
+            ) : (
+              <ArrowLeftEndOnRectangleIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
             )}
           </div>
 
@@ -80,7 +87,9 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
                 ? "Delete Note"
                 : type === "archive"
                 ? "Archive Note"
-                : "Restore Note"}
+                : type === "restore"
+                ? "Restore Note"
+                : "Logout"}
             </h2>
 
             <p className="text-sm text-gray-600 mb-6">
@@ -88,7 +97,9 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
                 ? "Are you sure you want to permanently delete this note? This action cannot be undone."
                 : type === "archive"
                 ? "Are you sure you want to archive this note? You can find it later in the Archived Notes section and restore it anytime."
-                : "Are you sure you want to restore this note? It will appear back in your active notes list."}
+                : type === "restore"
+                ? "Are you sure you want to restore this note?"
+                : "Are you sure you want to logout of your account?"}
             </p>
           </div>
         </div>

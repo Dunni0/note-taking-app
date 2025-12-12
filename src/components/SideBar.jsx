@@ -15,9 +15,24 @@ export const SideBar = ({ activeView, setActiveView, notes }) => {
     setActiveView(buttonName);
   };
 
-  const tags = Array.from(
-    new Set(notes?.map((note) => note.tag).filter(Boolean))
-  );
+  console.log("Notes in SideBar:", notes);
+
+ const tags = notes?.reduce((acc, note) => {
+  // ignore archived notes
+  if (note.archived) return acc;
+
+  // ignore notes without tags
+  if (!note.tag) return acc;
+
+  // add tag only if not already added
+  if (!acc.includes(note.tag)) {
+    acc.push(note.tag);
+  }
+
+  return acc;
+}, []) || [];
+
+
   return (
     <div>
       <div>

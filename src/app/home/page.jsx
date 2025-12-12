@@ -1,52 +1,3 @@
-// "use client"
-
-// import { Body } from "@/components/Body";
-// import { SideBar } from "@/components/SideBar";
-// import { TopNav } from "@/components/TopNav";
-// import { useEffect, useState } from "react";
-
-
-// import { useSession } from "next-auth/react";
-
-// export default function Home() {
-// const {data, status} = useSession()
-
-// console.log(data)
-
-//   const [view, setView] = useState("allNotes"); 
-//   const [notes, setNotes] = useState([]);
-
-//   const getAllNotes = async () => {
-//     try {
-//       const response = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`, {
-//         cache: "no-store",
-//       });
-//       if (!response.ok) throw new Error("Error fetching notes");
-//       const data = await response.json();
-//       setNotes(data?.getNotes || []);
-//     } catch (error) {
-//       console.log("Fetch error:", error);
-//     }
-//   };
-
-//   useEffect(() => {
-//     getAllNotes();
-//   }, []);
-
-//   return (
-//     <div className="flex flex-row h-[100vh]">
-//       <nav className="w-[15rem] text-[14px] p-4 border-r-1 border-gray-300">
-//         <SideBar activeView={view} setActiveView={setView}  notes={notes}  />
-//       </nav>
-//       <main className="flex-1">
-//         <TopNav notes={notes} />
-//         <Body activeView={view} user={data} notes={notes} refreshNotes={getAllNotes}  />
-//       </main>
-//     </div>
-//   );
-// }
-
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -63,8 +14,12 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { FaPlus } from "react-icons/fa";
+import { useDispatch } from "react-redux";
+import { openConfirmModal } from "@/store/ConfirmModalSlice";
 
 export default function Home() {
+  const dispatch = useDispatch();
+
   const bodyRef = useRef(null);
   const { data: sessionData } = useSession();
 
@@ -101,7 +56,7 @@ export default function Home() {
   const {
     data: notes = [],
     isFetching,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: ["notes", debouncedQuery],
     queryFn: () => getAllNotes(debouncedQuery),
@@ -186,7 +141,12 @@ export default function Home() {
               </button>
 
               {/* Logout */}
-              <button className="flex flex-col items-center cursor-pointer text-gray-500 dark:text-gray-400 transition-colors duration-300">
+              <button
+                onClick={() =>
+                  dispatch(openConfirmModal({ type: "logout", noteId: null }))
+                }
+                className="flex flex-col items-center cursor-pointer text-gray-500 dark:text-gray-400 transition-colors duration-300"
+              >
                 <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
                 <p className="text-xs">Logout</p>
               </button>
