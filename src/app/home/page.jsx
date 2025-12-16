@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { FaPlus } from "react-icons/fa";
 import { useDispatch } from "react-redux";
-import { openConfirmModal } from "@/store/ConfirmModalSlice";
+import { openConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import { getAllNotes } from "@/store/notes";
 
 export default function Home() {

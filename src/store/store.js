@@ -1,6 +1,6 @@
 // store/store.js
 import { configureStore } from "@reduxjs/toolkit";
-import confirmModalReducer from "./ConfirmModalSlice";
+import confirmModalReducer from "./modals/ConfirmModalSlice";
 
 export const store = configureStore({
   reducer: {

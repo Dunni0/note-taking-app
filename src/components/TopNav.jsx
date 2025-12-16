@@ -1,5 +1,5 @@
 import Logo from "@/assets/images/logo";
-import { openConfirmModal } from "@/store/ConfirmModalSlice";
+import { openConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import {
   ArrowLeftEndOnRectangleIcon,
   MagnifyingGlassIcon,

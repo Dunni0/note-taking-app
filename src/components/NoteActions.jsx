@@ -1,6 +1,6 @@
 "use client";
 
-import { openConfirmModal } from "@/store/ConfirmModalSlice";
+import { openConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import {
   ArchiveBoxArrowDownIcon,
   ArrowPathIcon,

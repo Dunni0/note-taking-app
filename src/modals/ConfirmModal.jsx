@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { closeConfirmModal } from "@/store/ConfirmModalSlice";
+import { closeConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import {
   ArchiveBoxArrowDownIcon,
   ArrowLeftEndOnRectangleIcon,
