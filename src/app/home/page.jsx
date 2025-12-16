@@ -16,6 +16,7 @@ import {
 import { FaPlus } from "react-icons/fa";
 import { useDispatch } from "react-redux";
 import { openConfirmModal } from "@/store/ConfirmModalSlice";
+import { getAllNotes } from "@/store/notes";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -38,20 +39,6 @@ export default function Home() {
     }, 500);
     return () => clearTimeout(timer);
   }, [searchQuery]);
-
-  // Fetch notes
-  const getAllNotes = async (query = "") => {
-    const url = query
-      ? `${
-          process.env.NEXT_PUBLIC_API_BASE_URL
-        }/api/notes?search=${encodeURIComponent(query)}`
-      : `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`;
-
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("Failed to fetch notes");
-    const data = await res.json();
-    return data?.getNotes || [];
-  };
 
   const {
     data: notes = [],

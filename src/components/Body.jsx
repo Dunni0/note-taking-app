@@ -4,6 +4,7 @@ import TaskEmpty from "../assets/TaskEmpty.jsx";
 import { ClockIcon, TagIcon } from "@heroicons/react/24/outline";
 import { NoteActions } from "./NoteActions.jsx";
 import { ConfirmModal } from "@/modals/ConfirmModal.jsx";
+import { createNote, updateNote } from "@/store/notes/index.js";
 
 export const Body = forwardRef(
   (
@@ -15,7 +16,7 @@ export const Body = forwardRef(
       setActiveView,
       searchQuery,
       onFormStateChange,
-      refreshNotes
+      refreshNotes,
     },
     ref
   ) => {
@@ -28,7 +29,7 @@ export const Body = forwardRef(
     const [showEditor, setShowEditor] = useState(false);
 
     const effectiveNotes = loading ? [] : notes;
-    
+
     useEffect(() => {
       onFormStateChange?.(isClickCreateNote);
     }, [isClickCreateNote, onFormStateChange]);
@@ -67,33 +68,28 @@ export const Body = forwardRef(
     const saveNotes = async (e) => {
       e.preventDefault();
 
-      const method = selectedNote ? "PUT" : "POST";
-      const bodyData = selectedNote
-        ? { id: selectedNote._id, title, tag, note, userId: user?.user?.id }
-        : { title, tag, note, userId: user?.user?.id };
+      const bodyData = {
+        title,
+        tag,
+        note,
+        userId: user?.user?.id,
+        ...(selectedNote ? { id: selectedNote._id } : {}),
+      };
 
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`,
-          {
-            method,
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(bodyData),
-          }
-        );
-        if (res.ok) {
-          await refreshNotes();
-          setSelectedNote(null);
-          setTitle("");
-          setTag("");
-          setNote("");
+        if (selectedNote) {
+          await updateNote(bodyData);
         } else {
-          throw new Error("Error occurred while creating new item");
+          await createNote(bodyData);
         }
+
+        await refreshNotes();
+        setSelectedNote(null);
+        setTitle("");
+        setTag("");
+        setNote("");
       } catch (error) {
-        console.log("Error: ", error);
+        console.error("Error saving note:", error);
       }
     };
 
@@ -124,10 +120,9 @@ export const Body = forwardRef(
       );
     }
 
-
     // Automatically open first archived note on XL screens
     useEffect(() => {
-      if(loading) return;
+      if (loading) return;
 
       if (activeView === "allNotes") {
         setSelectedNote(null);
@@ -159,7 +154,6 @@ export const Body = forwardRef(
         setHasAutoSelected(true);
       }
     }, [activeView, hasAutoSelected, notes, loading]);
-    
 
     return (
       <div className="xl:flex h-full">
@@ -170,7 +164,7 @@ export const Body = forwardRef(
         `}
         >
           {/* Show Create New Note button for allNotes AND tag views */}
-          {(activeView === "allNotes" && !searchQuery) && (
+          {activeView === "allNotes" && !searchQuery && (
             <button
               onClick={() => {
                 setIsClickCreateNote(true);
@@ -393,9 +387,9 @@ export const Body = forwardRef(
               showEditor ? "block" : "hidden"
             } xl:block xl:w-72 p-4 border-t border-l-0 xl:border-l-1 xl:border-t-0 border-gray-300 pb-20 md:pb-0`}
           >
-            <NoteActions 
-              activeView={activeView} 
-              selectedNote={selectedNote} 
+            <NoteActions
+              activeView={activeView}
+              selectedNote={selectedNote}
               refreshNotes={refreshNotes}
             />
           </aside>

@@ -9,6 +9,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { signOut } from "next-auth/react";
+import { deleteNote, updateNoteArchiveStatus } from "@/store/notes";
 
 export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
   const dispatch = useDispatch();
@@ -22,51 +23,35 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
     setLoading(true);
 
     try {
-      let response;
       if (type === "delete") {
-        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`, {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: noteId }),
-        });
-      } else if (type === "archive") {
-        const payload = { id: noteId, archived: true };
-        console.log("Sending archive payload:", payload);
-
-        response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`,
-          {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          }
-        );
-
-        const result = await response.json();
-        console.log("Archive response:", result);
-      } else if (type === "restore") {
-        await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/api/notes`, {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: noteId, archived: false }),
-        });
-      } else if (type === "logout") {
-        await signOut({ callbackUrl: "/login" });
-        return; // stop execution so modal doesn't run refreshNotes
+        await deleteNote(noteId);
       }
 
-      onActionComplete && onActionComplete();
+      if (type === "archive") {
+        await updateNoteArchiveStatus(noteId, true);
+      }
+
+      if (type === "restore") {
+        await updateNoteArchiveStatus(noteId, false);
+      }
+
+      if (type === "logout") {
+        await signOut({ callbackUrl: "/login" });
+        return;
+      }
+
+      onActionComplete?.();
+      refreshNotes?.();
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Confirm action failed:", err);
     } finally {
       setLoading(false);
       dispatch(closeConfirmModal());
-      refreshNotes && refreshNotes();
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 p-4">
       <div className="bg-white rounded-lg p-6 shadow-lg w-[400px] md:w-[500px]">
         <div className="flex align-top gap-3">
           <div>

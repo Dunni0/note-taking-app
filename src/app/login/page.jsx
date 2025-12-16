@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { signIn } from "next-auth/react";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 
 export default function Login() {
   const router = useRouter();
@@ -14,6 +15,8 @@ export default function Login() {
   const [isLogin, setIsLogin] = useState(true); // Toggle between login/register
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
 
   // Auto-clear errors after 5 s
   useEffect(() => {
@@ -90,19 +93,35 @@ export default function Login() {
           {/* Password Field */}
           <div className="flex flex-col gap-3">
             <label className="font-[500]">Password</label>
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              type="password"
-              placeholder={
-                isLogin
-                  ? "Enter your password"
-                  : "Choose a password (min 8 characters)"
-              }
-              required
-              minLength={8}
-              className="text-gray-400 outline-none focus:border-b-1 focus:p-1.5 border-gray-200 transition-all duration-300 ease-in-out"
-            />
+
+            <div className="relative">
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                value={password}
+                type={showPassword ? "text" : "password"}
+                placeholder={
+                  isLogin
+                    ? "Enter your password"
+                    : "Choose a password (min 8 characters)"
+                }
+                required
+                minLength={8}
+                className="w-full pr-10 text-gray-400 outline-none border-b border-gray-200 focus:border-b-2 focus:p-1.5 transition-all duration-300 ease-in-out"
+              />
+
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? (
+                  <AiOutlineEyeInvisible size={20} />
+                ) : (
+                  <AiOutlineEye size={20} />
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Submit Button */}
