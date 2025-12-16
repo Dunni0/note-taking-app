@@ -106,7 +106,7 @@ export default function Login() {
                 }
                 required
                 minLength={8}
-                className="w-full pr-10 text-gray-400 outline-none border-b border-gray-200 focus:border-b-2 focus:p-1.5 transition-all duration-300 ease-in-out"
+                className="w-full pr-10 text-gray-400 outline-none focus:border-b-1 focus:p-1.5 border-gray-200 transition-all duration-300 ease-in-out"
               />
 
               <button
