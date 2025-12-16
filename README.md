@@ -1,36 +1,222 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Note Taking App
 
-## Getting Started
+A full-stack Next.js note-taking application backed by MongoDB.
+The app supports authentication, note CRUD operations, tags, search, archiving, and centralized state management.
 
-First, run the development server:
+---
 
-```bash
+## Tech Stack
+
+### Frontend
+
+* Next.js 13+ (App Router)
+* React (Client Components)
+* Redux Toolkit
+* NextAuth
+* Tailwind CSS
+* React Icons
+
+### Backend
+
+* Next.js API Routes
+* MongoDB
+* Mongoose
+
+---
+
+## Features
+
+* User authentication (login, register, logout)
+* Create, update, delete notes
+* Archive and restore notes
+* Tag support (multiple tags per note)
+* Search by title, content, and tags
+* Confirmation modal for destructive actions
+* Centralized API service layer
+* Predictable global state management with Redux
+
+---
+
+## Folder Structure
+
+note-taking-app/
+├── lib/
+│   └── mongodb.js
+│
+├── models/
+│   ├── Notes.js
+│   └── Users.js
+│
+├── src/
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── auth/
+│   │   │   ├── notes/
+│   │   │   │   └── route.js
+│   │   │   └── register/
+│   │   │
+│   │   ├── home/
+│   │   │   └── page.jsx
+│   │   ├── login/
+│   │   │   └── page.jsx
+│   │   ├── layout.jsx
+│   │   └── globals.css
+│   │
+│   ├── components/
+│   │   ├── Body.jsx
+│   │   ├── NoteActions.jsx
+│   │   ├── SideBar.jsx
+│   │   ├── TopNav.jsx
+│   │   └── SessionWrapper.jsx
+│   │
+│   ├── modals/
+│   │   └── ConfirmModal.jsx
+│   │
+│   ├── providers/
+│   │   ├── ReduxProvider.jsx
+│   │   └── QueryProvider.jsx
+│   │
+│   ├── store/
+│   │   ├── notes/
+│   │   │   └── index.js
+│   │   ├── modals/
+│   │   │   └── ConfirmModalSlice.js
+│   │   └── store.js
+│   │
+│   └── assets/
+│
+├── public/
+├── .env.local
+├── package.json
+└── next.config.js
+
+---
+
+## Notes Data Model
+
+Note
+
+* _id: ObjectId
+* title: string
+* note: string
+* tag: string[]
+* archived: boolean
+* userId: ObjectId
+* createdAt: Date
+* updatedAt: Date
+
+---
+
+## API Design
+
+All note operations are handled via:
+
+/api/notes
+
+### Supported Methods
+
+* GET – Fetch notes (supports search query)
+* POST – Create a new note
+* PUT – Update an existing note
+* PATCH – Archive or restore a note
+* DELETE – Delete a note
+
+Search example:
+
+GET /api/notes?search=meeting
+
+---
+
+## Notes Service Layer
+
+Client-side API calls are centralized in:
+
+src/store/notes/index.js
+
+### Exposed Functions
+
+* getAllNotes(query)
+* createNote(noteData)
+* updateNote(noteData)
+* deleteNote(id)
+* updateNoteArchiveStatus(id, archived)
+
+UI components do not call fetch directly.
+
+---
+
+## State Management
+
+### Notes
+
+* Managed globally using Redux Toolkit
+* Refreshed after create, update, delete, and archive actions
+
+### Confirm Modal
+
+Slice location:
+src/store/modals/ConfirmModalSlice.js
+
+State shape:
+
+* open: boolean
+* type: delete | archive | restore | logout
+* noteId: string | null
+
+Used to prevent accidental destructive actions.
+
+---
+
+## Search and Tags
+
+* Client-side search
+* Debounced input
+* Matches note title, content, and tags
+
+---
+
+## Environment Variables
+
+Create a .env.local file:
+
+NEXT_PUBLIC_API_BASE_URL=[http://localhost:3000](http://localhost:3000)
+MONGODB_URI=mongodb+srv://...
+NEXTAUTH_SECRET=your_secret
+
+---
+
+## Running the Project
+
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3001](http://localhost:3001) with your browser to see the result.
+Application runs at:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+[http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Limitations
 
-To learn more about Next.js, take a look at the following resources:
+* Search is not indexed (no MongoDB text index yet)
+* No offline support
+* No note version history
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Future Improvements
 
-## Deploy on Vercel
+* MongoDB text indexes
+* Server-side pagination
+* Tag management
+* Autosave drafts
+* Rich text editor
+* Dark mode
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+
+MIT
+
+---
