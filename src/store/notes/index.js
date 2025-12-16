@@ -1,5 +1,6 @@
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+// lib/api.js or services/notes.js
 
+// Generic request helper
 const request = async (url, options) => {
   const res = await fetch(url, {
     headers: { "Content-Type": "application/json" },
@@ -14,22 +15,19 @@ const request = async (url, options) => {
   return res.json().catch(() => null);
 };
 
-// Fetch notes
+// Fetch all notes
 export const getAllNotes = async (query = "") => {
   const url = query
-    ? `${BASE_URL}/api/notes?search=${encodeURIComponent(query)}`
-    : `${BASE_URL}/api/notes`;
+    ? `/api/notes?search=${encodeURIComponent(query)}`
+    : `/api/notes`;
 
-  const res = await fetch(url, { cache: "no-store" });
-  if (!res.ok) throw new Error("Failed to fetch notes");
-
-  const data = await res.json();
-  return data?.getNotes || [];
+  const data = await request(url, { cache: "no-store" });
+  return Array.isArray(data?.getNotes) ? data.getNotes : [];
 };
 
 // Create a new note
 export const createNote = async (noteData) => {
-  return request(`${BASE_URL}/api/notes`, {
+  return request(`/api/notes`, {
     method: "POST",
     body: JSON.stringify(noteData),
   });
@@ -37,7 +35,7 @@ export const createNote = async (noteData) => {
 
 // Update an existing note
 export const updateNote = async (noteData) => {
-  return request(`${BASE_URL}/api/notes`, {
+  return request(`/api/notes`, {
     method: "PUT",
     body: JSON.stringify(noteData),
   });
@@ -45,7 +43,7 @@ export const updateNote = async (noteData) => {
 
 // Delete note
 export const deleteNote = async (id) => {
-  return request(`${BASE_URL}/api/notes`, {
+  return request(`/api/notes`, {
     method: "DELETE",
     body: JSON.stringify({ id }),
   });
@@ -53,7 +51,7 @@ export const deleteNote = async (id) => {
 
 // Archive / restore note
 export const updateNoteArchiveStatus = async (id, archived) => {
-  return request(`${BASE_URL}/api/notes`, {
+  return request(`/api/notes`, {
     method: "PATCH",
     body: JSON.stringify({ id, archived }),
   });
