@@ -1,0 +1,6 @@
+# Protect API files
+src/app/ @yDunni0
+
+
+# Protect frontend components
+src/components/ @Dunni0
