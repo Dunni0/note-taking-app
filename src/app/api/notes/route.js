@@ -22,7 +22,7 @@ export async function POST(request) {
   await connectToDB();
   await Notes.create({
     title,
-    tag,
+    tag: tag?.trim() || "",
     note,
     userId: new mongoose.Types.ObjectId(session.user.id), // comes from auth
   });
@@ -67,8 +67,8 @@ export async function PUT(request) {
     // Ensure the note belongs to the logged-in user
     const updatedNote = await Notes.findOneAndUpdate(
       { _id: id, userId: session.user.id },
-      { title, tag, note },
-      { new: true } // return updated document
+      { title, tag: tag?.trim() || "", note },
+      { new: true, runValidators: false } // return updated document
     );
 
     if (!updatedNote) {

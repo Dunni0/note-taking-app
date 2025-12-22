@@ -8,30 +8,26 @@ import {
   TagIcon,
 } from "@heroicons/react/24/outline";
 
-
 export const SideBar = ({ activeView, setActiveView, notes }) => {
-
   const handleClick = (buttonName) => {
     setActiveView(buttonName);
   };
 
-  console.log("Notes in SideBar:", notes);
+  // console.log("Notes in SideBar:", notes);
 
- const tags = notes?.reduce((acc, note) => {
-  // ignore archived notes
-  if (note.archived) return acc;
+const tags =
+  notes?.reduce((acc, note) => {
+    if (note.archived) return acc;
 
-  // ignore notes without tags
-  if (!note.tag) return acc;
+    const normalizedTag =
+      note.tag && note.tag.trim() !== "" ? note.tag.trim() : "untagged";
 
-  // add tag only if not already added
-  if (!acc.includes(note.tag)) {
-    acc.push(note.tag);
-  }
+    if (!acc.includes(normalizedTag)) {
+      acc.push(normalizedTag);
+    }
 
-  return acc;
-}, []) || [];
-
+    return acc;
+  }, []) || [];
 
   return (
     <div>
@@ -103,7 +99,7 @@ export const SideBar = ({ activeView, setActiveView, notes }) => {
                       : "stroke-neutral-700"
                   }`}
                 />
-                <p>{tag}</p>
+                 <p>{tag}</p>
               </button>
             ))
           )}

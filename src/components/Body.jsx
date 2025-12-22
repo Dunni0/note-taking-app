@@ -30,6 +30,8 @@ export const Body = forwardRef(
 
     const effectiveNotes = loading ? [] : notes;
 
+    const isFormInvalid = title.trim() === "" || note.trim() === "";
+
     useEffect(() => {
       onFormStateChange?.(isClickCreateNote);
     }, [isClickCreateNote, onFormStateChange]);
@@ -83,7 +85,6 @@ export const Body = forwardRef(
           await createNote(bodyData);
         }
 
-        await refreshNotes();
         setSelectedNote(null);
         setTitle("");
         setTag("");
@@ -104,9 +105,12 @@ export const Body = forwardRef(
     } else if (activeView === "archivedNotes") {
       filteredNotes = effectiveNotes.filter((note) => note.archived);
     } else if (selectedTag) {
-      filteredNotes = effectiveNotes.filter(
-        (note) => note.tag === selectedTag && !note.archived
-      );
+      filteredNotes = effectiveNotes.filter((note) => {
+        const normalizedTag =
+          note.tag && note.tag.trim() !== "" ? note.tag.trim() : "untagged";
+
+        return normalizedTag === selectedTag && !note.archived;
+      });
     } else {
       filteredNotes = effectiveNotes;
     }
@@ -116,7 +120,7 @@ export const Body = forwardRef(
       filteredNotes = filteredNotes.filter(
         (note) =>
           note.title.toLowerCase().includes(query) ||
-          note.tag.toLowerCase().includes(query)
+          (note.tag || "").toLowerCase().includes(query)
       );
     }
 
@@ -236,9 +240,11 @@ export const Body = forwardRef(
                   }`}
                 >
                   <p className="text-[14px] font-[700] ">{note.title}</p>
-                  <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
-                    {note.tag}
-                  </p>
+                  {note.tag && (
+                    <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
+                      {note.tag}
+                    </p>
+                  )}
                   <p className="text-[14px]">
                     {new Date(note.updatedAt).toLocaleString()}
                   </p>
@@ -336,10 +342,19 @@ export const Body = forwardRef(
                   {activeView === "allNotes" && (
                     <button
                       type="submit"
+                      disabled={isFormInvalid}
                       onClick={() => {
-                        setShowEditor(false);
+                        if (!isFormInvalid) {
+                          setShowEditor(false);
+                          refreshNotes();
+                        }
                       }}
-                      className="bg-blue-700 font-bold cursor-pointer text-white px-[14px] py-[12px] text-[14px] rounded-sm hover:bg-blue-600"
+                      className={`font-bold px-[14px] py-[12px] text-[14px] rounded-sm
+                      ${
+                        isFormInvalid
+                          ? "bg-blue-500 cursor-not-allowed text-white"
+                          : "bg-blue-700 hover:bg-blue-600 cursor-pointer text-white"
+                      }`}
                     >
                       Save Note
                     </button>
