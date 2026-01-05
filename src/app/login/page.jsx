@@ -67,32 +67,37 @@ export default function Login() {
 
   return (
     <div className="p-8">
-      <div className="border-[0.5px] border-gray-300 shadow-2xl rounded-[12px] p-[2rem] mx-auto mt-[4rem] max-w-[600px] bg-[#fff]">
-        <div className="flex flex-col items-center gap-3 mb-8">
-          <Logo className="mb-3" />
-          <p className="font-[600]">Welcome to Notes!</p>
-          <p className="text-gray-400">
-            {isLogin ? "Please login to continue" : "Create an account"}
+      <div className="border-[0.5px] border-gray-300 rounded-[12px] p-[2rem] mx-auto mt-[4rem] max-w-[500px] bg-[#fff] shadow-xl">
+        <Logo className="mb-5 mx-auto" />
+        <div className="flex flex-col items-center gap-1 mb-8">
+          <p className="font-[600] text-xl">
+            {" "}
+            {isLogin ? "Welcome to Notes!" : "Create an account"}
+          </p>
+          <p className="text-gray-600 text-center text-[14px]">
+            {isLogin
+              ? "Please login to continue"
+              : "Sign up to start organizing your notes and boost your productivity."}
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Email Field */}
-          <div className="flex flex-col gap-3">
-            <label className="font-[500]">Email Address</label>
+          <div className="flex flex-col gap-2">
+            <label className="font-[500] text-sm">Email Address</label>
             <input
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               type="email"
               placeholder="email@example.com"
               required
-              className="text-gray-400 outline-none focus:border-b-1 focus:p-1.5 border-gray-200 transition-all duration-300 ease-in-out"
+              className="py-2 pl-2 rounded-sm text-gray-400 outline-none border focus:p-3 border-gray-300 transition-all duration-300 ease-in-out"
             />
           </div>
 
           {/* Password Field */}
-          <div className="flex flex-col gap-3">
-            <label className="font-[500]">Password</label>
+          <div className="flex flex-col gap-2">
+            <label className="font-[500] text-sm">Password</label>
 
             <div className="relative">
               <input
@@ -106,7 +111,7 @@ export default function Login() {
                 }
                 required
                 minLength={8}
-                className="w-full pr-10 text-gray-400 outline-none focus:border-b-1 focus:p-1.5 border-gray-200 transition-all duration-300 ease-in-out"
+                className="py-2 rounded-sm pl-2 w-full pr-10 text-gray-400 outline-none border focus:p-3 border-gray-300 transition-all duration-300 ease-in-out"
               />
 
               <button
@@ -125,10 +130,11 @@ export default function Login() {
           </div>
 
           {/* Submit Button */}
+          <div className="border-b border-gray-300 pb-5"> 
           <button
             type="submit"
             disabled={isLoading}
-            className="mt-[3rem] rounded-sm w-[100%] bg-blue-700 text-white font-[600] p-[10px] cursor-pointer hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed flex justify-center items-center"
+            className="mt-[1rem] rounded-sm w-[100%] bg-blue-700 text-white font-[600] p-[10px] cursor-pointer hover:bg-blue-600 disabled:bg-blue-400 disabled:cursor-not-allowed flex justify-center items-center"
           >
             {isLoading ? (
               <>
@@ -162,6 +168,7 @@ export default function Login() {
               "Register"
             )}
           </button>
+          </div>
 
           {/* Error Message */}
           {error && (
