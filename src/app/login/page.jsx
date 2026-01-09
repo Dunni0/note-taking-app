@@ -82,7 +82,7 @@ export default function Login() {
 
   return (
     <div className="p-8">
-      <div className="border-[0.5px] border-gray-300 rounded-[12px] p-[2rem] mx-auto mt-[1rem] max-w-[500px] bg-[#fff] shadow-xl">
+      <div className="border-[0.5px] border-gray-300 rounded-[12px] p-[2rem] mx-auto mt-[4rem] max-w-[500px] bg-[#fff] shadow-xl">
         <Logo className="mb-5 mx-auto" />
         <div className="flex flex-col items-center gap-1 mb-8">
           <p className="font-[600] text-xl">
