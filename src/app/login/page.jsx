@@ -18,7 +18,7 @@ export default function Login() {
   const [error, setError] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  // const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
   // Auto-clear errors after 5 s
   useEffect(() => {
@@ -67,18 +67,18 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = async () => {
-    setIsGoogleLoading(true);
-    setError("");
+  // const handleGoogleLogin = async () => {
+  //   setIsGoogleLoading(true);
+  //   setError("");
 
-    try {
-      await signIn("google", { callbackUrl: "/home" });
-      // no set false — page will redirect
-    } catch (err) {
-      setError("Google sign-in failed");
-      setIsGoogleLoading(false);
-    }
-  };
+  //   try {
+  //     await signIn("google", { callbackUrl: "/home" });
+  //     // no set false — page will redirect
+  //   } catch (err) {
+  //     setError("Google sign-in failed");
+  //     setIsGoogleLoading(false);
+  //   }
+  // };
 
   return (
     <div className="p-8">
@@ -196,7 +196,7 @@ export default function Login() {
               {error}
             </div>
           )}
-          <p className="mt-[0.5rem] text-center text-gray-500 text-[12px] font-semibold">
+          {/* <p className="mt-[0.5rem] text-center text-gray-500 text-[12px] font-semibold">
             Or log in with
           </p>
           <button
@@ -207,7 +207,7 @@ export default function Login() {
           >
             <FaGoogle className="w-5 h-5" />
             Google
-          </button>
+          </button> */}
           {/* Toggle Link */}
           <p className="text-center text-gray-500 text-[12px] font-semibold">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
