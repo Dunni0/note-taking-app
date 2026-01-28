@@ -19,15 +19,34 @@ const tags =
   notes?.reduce((acc, note) => {
     if (note.archived) return acc;
 
-    const normalizedTag =
-      note.tag && note.tag.trim() !== "" ? note.tag.trim() : "untagged";
+    // Handle both array and string formats for backward compatibility
+    let noteTags = [];
+    if (Array.isArray(note.tag)) {
+      noteTags = note.tag.filter(t => t && t.trim());
+    } else if (typeof note.tag === 'string' && note.tag.trim()) {
+      // If it's a string, split by comma
+      noteTags = note.tag.split(',').map(t => t.trim()).filter(t => t);
+    }
 
-    if (!acc.includes(normalizedTag)) {
-      acc.push(normalizedTag);
+    if (noteTags.length === 0) {
+      // Add untagged if note has no tags
+      if (!acc.includes('untagged')) {
+        acc.push('untagged');
+      }
+    } else {
+      noteTags.forEach(tag => {
+        const trimmedTag = tag.trim();
+        if (trimmedTag && !acc.includes(trimmedTag)) {
+          acc.push(trimmedTag);
+        }
+      });
     }
 
     return acc;
   }, []) || [];
+
+  console.log('Extracted tags:', tags);
+  console.log('Sample note tags:', notes?.[0]?.tag);
 
   return (
     <div className="text-gray-900 dark:text-gray-100">

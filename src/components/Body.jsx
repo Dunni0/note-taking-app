@@ -27,6 +27,7 @@ export const Body = forwardRef(
     const [selectedNote, setSelectedNote] = useState(null);
     const [hasAutoSelected, setHasAutoSelected] = useState(false);
     const [showEditor, setShowEditor] = useState(false);
+    const [error, setError] = useState("");
 
     const effectiveNotes = loading ? [] : notes;
 
@@ -61,7 +62,8 @@ export const Body = forwardRef(
     const handleNoteClick = (noteItem) => {
       setSelectedNote(noteItem);
       setTitle(noteItem.title);
-      setTag(noteItem.tag);
+      // Convert array back to comma-separated string for editing
+      setTag(Array.isArray(noteItem.tag) ? noteItem.tag.join(', ') : noteItem.tag || '');
       setNote(noteItem.note);
       setIsClickCreateNote(true);
       setShowEditor(true);
@@ -69,6 +71,7 @@ export const Body = forwardRef(
 
     const saveNotes = async (e) => {
       e.preventDefault();
+      setError("");
 
       const bodyData = {
         title,
@@ -89,8 +92,13 @@ export const Body = forwardRef(
         setTitle("");
         setTag("");
         setNote("");
+        setShowEditor(false);
+        
+        // Refresh notes after successful save
+        await refreshNotes();
       } catch (error) {
         console.error("Error saving note:", error);
+        setError(selectedNote ? "Failed to update note. Please try again." : "Failed to create note. Please try again.");
       }
     };
 
@@ -106,10 +114,20 @@ export const Body = forwardRef(
       filteredNotes = effectiveNotes.filter((note) => note.archived);
     } else if (selectedTag) {
       filteredNotes = effectiveNotes.filter((note) => {
-        const normalizedTag =
-          note.tag && note.tag.trim() !== "" ? note.tag.trim() : "untagged";
-
-        return normalizedTag === selectedTag && !note.archived;
+        // Handle both array and string formats
+        let tags = [];
+        if (Array.isArray(note.tag)) {
+          tags = note.tag.filter(t => t && t.trim());
+        } else if (typeof note.tag === 'string' && note.tag.trim()) {
+          tags = note.tag.split(',').map(t => t.trim()).filter(t => t);
+        }
+        
+        // Handle untagged filter
+        if (selectedTag === 'untagged') {
+          return tags.length === 0 && !note.archived;
+        }
+        
+        return tags.includes(selectedTag) && !note.archived;
       });
     } else {
       filteredNotes = effectiveNotes;
@@ -118,9 +136,17 @@ export const Body = forwardRef(
     if (searchQuery.trim() !== "") {
       const query = searchQuery.toLowerCase();
       filteredNotes = filteredNotes.filter(
-        (note) =>
-          note.title.toLowerCase().includes(query) ||
-          (note.tag || "").toLowerCase().includes(query)
+        (note) => {
+          // Handle both array and string formats
+          let tags = '';
+          if (Array.isArray(note.tag)) {
+            tags = note.tag.join(' ');
+          } else if (typeof note.tag === 'string') {
+            tags = note.tag;
+          }
+          return note.title.toLowerCase().includes(query) ||
+            tags.toLowerCase().includes(query);
+        }
       );
     }
 
@@ -144,7 +170,7 @@ export const Body = forwardRef(
           const firstArchivedNote = archivedNotes[0];
           setSelectedNote(firstArchivedNote);
           setTitle(firstArchivedNote.title || "");
-          setTag(firstArchivedNote.tag || "");
+          setTag(Array.isArray(firstArchivedNote.tag) ? firstArchivedNote.tag.join(', ') : firstArchivedNote.tag || "");
           setNote(firstArchivedNote.note || "");
           setIsClickCreateNote(true);
           setShowEditor(false);
@@ -240,11 +266,20 @@ export const Body = forwardRef(
                   }`}
                 >
                   <p className="text-[14px] font-[700] text-gray-900 dark:text-gray-100">{note.title}</p>
-                  {note.tag && (
-                    <p className="bg-neutral-200 dark:bg-gray-700 w-fit py-1 px-1 rounded-sm text-[12px] font-[500] text-gray-900 dark:text-gray-100">
-                      {note.tag}
-                    </p>
-                  )}
+                  {(() => {
+                    const tags = Array.isArray(note.tag) 
+                      ? note.tag.filter(t => t && t.trim()) 
+                      : (note.tag || '').split(',').map(t => t.trim()).filter(t => t);
+                    return tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {tags.map((t, idx) => (
+                          <span key={idx} className="bg-neutral-200 dark:bg-gray-700 py-1 px-2 rounded-sm text-[12px] font-[500] text-gray-900 dark:text-gray-100">
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    );
+                  })()}
                   <p className="text-[14px] text-gray-700 dark:text-gray-300">
                     {new Date(note.updatedAt).toLocaleString()}
                   </p>
@@ -266,6 +301,13 @@ export const Body = forwardRef(
               className={` ${!selectedNote ? "pb-18 md:pb-0" : ""}`}
             >
               <div className="border-b-1 border-gray-300 dark:border-gray-700 pb-3">
+                {/* Error message */}
+                {error && (
+                  <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded">
+                    {error}
+                  </div>
+                )}
+                
                 {/* Back button for small screens */}
                 <button
                   type="button"
@@ -276,6 +318,7 @@ export const Body = forwardRef(
                     setNote("");
                     setIsClickCreateNote(false);
                     setShowEditor(false);
+                    setError("");
                   }}
                   className="xl:hidden cursor-pointer text-blue-600 mb-4 flex items-center gap-1 font-medium"
                 >
@@ -292,7 +335,7 @@ export const Body = forwardRef(
                 />
                 <div className="flex gap-[4rem] mt-4">
                   <div className="flex items-center gap-1">
-                    <TagIcon className="w-5 h-5 stroke-2" />
+                    <TagIcon className="w-5 h-5 stroke-2 dark:text-gray-300" />
                     <p className="text-neutral-700 dark:text-gray-300 text-sm font-[500]">Tags</p>
                   </div>
                   <input
@@ -306,7 +349,7 @@ export const Body = forwardRef(
                 </div>
                 <div className="flex gap-[1.5rem] mt-3">
                   <div className="flex items-center gap-1">
-                    <ClockIcon className="w-5 h-5 stroke-2" />
+                    <ClockIcon className="w-5 h-5 stroke-2 dark:text-gray-300" />
                     <p className="text-neutral-700 dark:text-gray-300 text-sm font-[500]">
                       Last edited
                     </p>
@@ -343,12 +386,6 @@ export const Body = forwardRef(
                     <button
                       type="submit"
                       disabled={isFormInvalid}
-                      onClick={() => {
-                        if (!isFormInvalid) {
-                          setShowEditor(false);
-                          refreshNotes();
-                        }
-                      }}
                       className={`font-bold px-[14px] py-[12px] text-[14px] rounded-sm
                       ${
                         isFormInvalid
@@ -368,6 +405,7 @@ export const Body = forwardRef(
                       setNote("");
                       setIsClickCreateNote(false);
                       setShowEditor(false);
+                      setError("");
                     }}
                     className={`${
                       activeView === "archivedNotes"

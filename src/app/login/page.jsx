@@ -81,15 +81,15 @@ export default function Login() {
   // };
 
   return (
-    <div className="p-8">
-      <div className="border-[0.5px] border-gray-300 rounded-[12px] p-[2rem] mx-auto mt-[4rem] max-w-[500px] bg-[#fff] shadow-xl">
+    <div className="p-8 min-h-screen bg-white dark:bg-gray-900">
+      <div className="border-[0.5px] border-gray-300 dark:border-gray-700 rounded-[12px] p-[2rem] mx-auto mt-[4rem] max-w-[500px] bg-[#fff] dark:bg-gray-800 shadow-xl">
         <Logo className="mb-5 mx-auto" />
         <div className="flex flex-col items-center gap-1 mb-8">
-          <p className="font-[600] text-xl">
+          <p className="font-[600] text-xl text-gray-900 dark:text-gray-100">
             {" "}
             {isLogin ? "Welcome to Notes!" : "Create an account"}
           </p>
-          <p className="text-gray-600 text-center text-[14px]">
+          <p className="text-gray-600 dark:text-gray-400 text-center text-[14px]">
             {isLogin
               ? "Please login to continue"
               : "Sign up to start organizing your notes and boost your productivity."}
@@ -99,21 +99,21 @@ export default function Login() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
           {/* Email Field */}
           <div className="flex flex-col gap-2">
-            <label className="font-[500] text-sm">Email Address</label>
+            <label className="font-[500] text-sm text-gray-900 dark:text-gray-100">Email Address</label>
             <input
               onChange={(e) => setEmail(e.target.value)}
               value={email}
               type="email"
               placeholder="email@example.com"
               required
-              className="py-2 pl-2 rounded-sm text-gray-400 outline-none border focus:p-3 border-gray-300 transition-all duration-300 ease-in-out"
+              className="py-2 pl-2 rounded-sm text-gray-400 dark:text-gray-300 outline-none border focus:p-3 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 transition-all duration-300 ease-in-out"
             />
           </div>
 
           {/* Password Field */}
           <div className="flex flex-col gap-2">
             <div className="flex justify-between items-center">
-              <label className="font-[500] text-sm">Password</label>
+              <label className="font-[500] text-sm text-gray-900 dark:text-gray-100">Password</label>
               {/* <span className="font-[500] text-xs underline text-gray-600 cursor-pointer">
                 {" "}
                 Forgot password{" "}
@@ -131,13 +131,13 @@ export default function Login() {
                 }
                 required
                 minLength={8}
-                className="py-2 rounded-sm pl-2 w-full pr-10 text-gray-400 outline-none border focus:p-3 border-gray-300 transition-all duration-300 ease-in-out"
+                className="py-2 rounded-sm pl-2 w-full pr-10 text-gray-400 dark:text-gray-300 outline-none border focus:p-3 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 transition-all duration-300 ease-in-out"
               />
 
               <button
                 type="button"
                 onClick={() => setShowPassword((prev) => !prev)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 cursor-pointer"
                 aria-label={showPassword ? "Hide password" : "Show password"}
               >
                 {showPassword ? (
@@ -150,7 +150,7 @@ export default function Login() {
           </div>
 
           {/* Submit Button */}
-          <div className="border-b border-gray-300 pb-5">
+          <div className="border-b border-gray-300 dark:border-gray-700 pb-5">
             <button
               type="submit"
               disabled={isLoading}
@@ -192,7 +192,7 @@ export default function Login() {
 
           {/* Error Message */}
           {error && (
-            <div className="text-red-700 text-[12px] font-semibold text-center">
+            <div className="text-red-700 dark:text-red-400 text-[12px] font-semibold text-center">
               {error}
             </div>
           )}
@@ -209,7 +209,7 @@ export default function Login() {
             Google
           </button> */}
           {/* Toggle Link */}
-          <p className="text-center text-gray-500 text-[12px] font-semibold">
+          <p className="text-center text-gray-500 dark:text-gray-400 text-[12px] font-semibold">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <button
               type="button"

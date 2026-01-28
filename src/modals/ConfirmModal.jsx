@@ -16,11 +16,13 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
   const { open, type, noteId } = useSelector((state) => state.confirmModal);
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!open) return null;
 
   const handleConfirm = async () => {
     setLoading(true);
+    setError("");
 
     try {
       if (type === "delete") {
@@ -42,11 +44,17 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
 
       onActionComplete?.();
       refreshNotes?.();
+      dispatch(closeConfirmModal());
     } catch (err) {
       console.error("Confirm action failed:", err);
+      setError(
+        type === "delete" ? "Failed to delete note. Please try again." :
+        type === "archive" ? "Failed to archive note. Please try again." :
+        type === "restore" ? "Failed to restore note. Please try again." :
+        "Action failed. Please try again."
+      );
     } finally {
       setLoading(false);
-      dispatch(closeConfirmModal());
     }
   };
 
@@ -88,10 +96,21 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
             </p>
           </div>
         </div>
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded text-sm">
+            {error}
+          </div>
+        )}
         <div className="flex justify-end gap-3 border-t-[1px] border-gray-200 dark:border-gray-600 pt-4">
           <button
-            onClick={() => dispatch(closeConfirmModal())}
-            className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 cursor-pointer text-gray-900 dark:text-gray-100"
+            onClick={() => {
+              dispatch(closeConfirmModal());
+              setError("");
+            }}
+            disabled={loading}
+            className={`px-4 py-2 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 ${
+              loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             Cancel
           </button>

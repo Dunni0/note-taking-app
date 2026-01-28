@@ -87,7 +87,7 @@ export const TopNav = ({
             </div>
 
             <div className="flex items-center gap-3">
-              <button
+              {/* <button
                 onClick={() => dispatch(toggleTheme())}
                 className="py-3 px-3 hover:bg-neutral-200 dark:hover:bg-gray-700 border border-neutral-200 dark:border-gray-600 rounded-lg cursor-pointer"
               >
@@ -96,7 +96,7 @@ export const TopNav = ({
                 ) : (
                   <SunIcon className="w-5 h-5 stroke-neutral-500 dark:stroke-gray-400" />
                 )}
-              </button>
+              </button> */}
               <button
                 onClick={() =>
                   dispatch(openConfirmModal({ type: "logout", noteId: null }))
@@ -125,7 +125,7 @@ export const TopNav = ({
           </div>
 
           <div className="flex items-center gap-3">
-            <button
+            {/* <button
               onClick={() => dispatch(toggleTheme())}
               className="py-3 px-3 hover:bg-neutral-200 dark:hover:bg-gray-700 border border-neutral-200 dark:border-gray-600 rounded-lg cursor-pointer"
             >
@@ -134,7 +134,7 @@ export const TopNav = ({
               ) : (
                 <SunIcon className="w-5 h-5 stroke-neutral-500 dark:stroke-gray-400" />
               )}
-            </button>
+            </button> */}
             <button
               onClick={() =>
                 dispatch(openConfirmModal({ type: "logout", noteId: null }))

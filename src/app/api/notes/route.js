@@ -18,11 +18,19 @@ export async function POST(request) {
 
   const { title, tag, note } = await request.json();
   console.log("SESSION:", session);
+  console.log("Received tag:", tag, "Type:", typeof tag);
+
+  // Parse comma-separated tags into array
+  const tagsArray = typeof tag === 'string' 
+    ? tag.split(',').map(t => t.trim()).filter(t => t !== '')
+    : Array.isArray(tag) ? tag : [];
+
+  console.log("Parsed tags array:", tagsArray);
 
   await connectToDB();
   await Notes.create({
     title,
-    tag: tag?.trim() || "",
+    tag: tagsArray,
     note,
     userId: new mongoose.Types.ObjectId(session.user.id), // comes from auth
   });
@@ -61,13 +69,21 @@ export async function PUT(request) {
       return NextResponse.json({ error: "Note ID is required" }, { status: 400 });
     }
 
+    console.log("Update - Received tag:", tag, "Type:", typeof tag);
+
+    // Parse comma-separated tags into array
+    const tagsArray = typeof tag === 'string' 
+      ? tag.split(',').map(t => t.trim()).filter(t => t !== '')
+      : Array.isArray(tag) ? tag : [];
+
+    console.log("Update - Parsed tags array:", tagsArray);
 
     await connectToDB();
 
     // Ensure the note belongs to the logged-in user
     const updatedNote = await Notes.findOneAndUpdate(
       { _id: id, userId: session.user.id },
-      { title, tag: tag?.trim() || "", note },
+      { title, tag: tagsArray, note },
       { new: true, runValidators: false } // return updated document
     );
 
