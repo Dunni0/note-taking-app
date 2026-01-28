@@ -211,7 +211,6 @@ Application runs at:
 * Tag management
 * Autosave drafts
 * Rich text editor
-* Dark mode
 
 ---
 
