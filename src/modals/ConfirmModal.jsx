@@ -16,11 +16,13 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
   const { open, type, noteId } = useSelector((state) => state.confirmModal);
 
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   if (!open) return null;
 
   const handleConfirm = async () => {
     setLoading(true);
+    setError("");
 
     try {
       if (type === "delete") {
@@ -42,32 +44,38 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
 
       onActionComplete?.();
       refreshNotes?.();
+      dispatch(closeConfirmModal());
     } catch (err) {
       console.error("Confirm action failed:", err);
+      setError(
+        type === "delete" ? "Failed to delete note. Please try again." :
+        type === "archive" ? "Failed to archive note. Please try again." :
+        type === "restore" ? "Failed to restore note. Please try again." :
+        "Action failed. Please try again."
+      );
     } finally {
       setLoading(false);
-      dispatch(closeConfirmModal());
     }
   };
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50 p-4">
-      <div className="bg-white rounded-lg p-6 shadow-lg w-[400px] md:w-[500px]">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-lg w-[400px] md:w-[500px]">
         <div className="flex align-top gap-3">
           <div>
             {type === "delete" ? (
-              <TrashIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
+              <TrashIcon className="w-8 h-8 stroke-2 stroke-neutral-700 dark:stroke-gray-300" />
             ) : type === "archive" ? (
-              <ArchiveBoxArrowDownIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
+              <ArchiveBoxArrowDownIcon className="w-8 h-8 stroke-2 stroke-neutral-700 dark:stroke-gray-300" />
             ) : type === "restore" ? (
-              <ArrowPathIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
+              <ArrowPathIcon className="w-8 h-8 stroke-2 stroke-neutral-700 dark:stroke-gray-300" />
             ) : (
-              <ArrowLeftEndOnRectangleIcon className="w-8 h-8 stroke-2 stroke-neutral-700" />
+              <ArrowLeftEndOnRectangleIcon className="w-8 h-8 stroke-2 stroke-neutral-700 dark:stroke-gray-300" />
             )}
           </div>
 
           <div>
-            <h2 className="text-lg font-bold mb-3">
+            <h2 className="text-lg font-bold mb-3 text-gray-900 dark:text-gray-100">
               {type === "delete"
                 ? "Delete Note"
                 : type === "archive"
@@ -77,7 +85,7 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
                 : "Logout"}
             </h2>
 
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
               {type === "delete"
                 ? "Are you sure you want to permanently delete this note? This action cannot be undone."
                 : type === "archive"
@@ -88,10 +96,21 @@ export const ConfirmModal = ({ refreshNotes, onActionComplete }) => {
             </p>
           </div>
         </div>
-        <div className="flex justify-end gap-3 border-t-[1px] border-gray-200 pt-4">
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 rounded text-sm">
+            {error}
+          </div>
+        )}
+        <div className="flex justify-end gap-3 border-t-[1px] border-gray-200 dark:border-gray-600 pt-4">
           <button
-            onClick={() => dispatch(closeConfirmModal())}
-            className="px-4 py-2 rounded bg-gray-100 hover:bg-gray-300 cursor-pointer"
+            onClick={() => {
+              dispatch(closeConfirmModal());
+              setError("");
+            }}
+            disabled={loading}
+            className={`px-4 py-2 rounded bg-gray-100 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-gray-100 ${
+              loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"
+            }`}
           >
             Cancel
           </button>

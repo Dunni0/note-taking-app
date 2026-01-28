@@ -19,24 +19,43 @@ const tags =
   notes?.reduce((acc, note) => {
     if (note.archived) return acc;
 
-    const normalizedTag =
-      note.tag && note.tag.trim() !== "" ? note.tag.trim() : "untagged";
+    // Handle both array and string formats for backward compatibility
+    let noteTags = [];
+    if (Array.isArray(note.tag)) {
+      noteTags = note.tag.filter(t => t && t.trim());
+    } else if (typeof note.tag === 'string' && note.tag.trim()) {
+      // If it's a string, split by comma
+      noteTags = note.tag.split(',').map(t => t.trim()).filter(t => t);
+    }
 
-    if (!acc.includes(normalizedTag)) {
-      acc.push(normalizedTag);
+    if (noteTags.length === 0) {
+      // Add untagged if note has no tags
+      if (!acc.includes('untagged')) {
+        acc.push('untagged');
+      }
+    } else {
+      noteTags.forEach(tag => {
+        const trimmedTag = tag.trim();
+        if (trimmedTag && !acc.includes(trimmedTag)) {
+          acc.push(trimmedTag);
+        }
+      });
     }
 
     return acc;
   }, []) || [];
 
+  console.log('Extracted tags:', tags);
+  console.log('Sample note tags:', notes?.[0]?.tag);
+
   return (
-    <div>
+    <div className="text-gray-900 dark:text-gray-100">
       <div>
         <Logo className="mb-5" />
-        <div className="flex flex-col gap-4 pb-4 border-b-1 border-gray-300">
+        <div className="flex flex-col gap-4 pb-4 border-b-1 border-gray-300 dark:border-gray-700">
           <button
             className={`cursor-pointer flex justify-between items-center ${
-              activeView === "allNotes" ? "bg-neutral-100 rounded-lg" : ""
+              activeView === "allNotes" ? "bg-neutral-100 dark:bg-gray-800 rounded-lg" : ""
             }`}
             onClick={() => handleClick("allNotes")}
           >
@@ -44,20 +63,20 @@ const tags =
               <HomeIcon
                 className={`w-4 stroke-2 ${
                   activeView === "allNotes"
-                    ? "stroke-blue-600"
-                    : "stroke-neutral-700"
+                    ? "stroke-blue-600 dark:stroke-blue-400"
+                    : "stroke-neutral-700 dark:stroke-gray-400"
                 }`}
               />
               <p>All Notes</p>
             </div>
             {activeView === "allNotes" && (
-              <ChevronRightIcon className="w-4 mr-3 stroke-neutral-700 stroke-3" />
+              <ChevronRightIcon className="w-4 mr-3 stroke-neutral-700 dark:stroke-gray-400 stroke-3" />
             )}
           </button>
 
           <button
             className={`cursor-pointer flex justify-between items-center ${
-              activeView === "archivedNotes" ? "bg-neutral-100 rounded-lg" : ""
+              activeView === "archivedNotes" ? "bg-neutral-100 dark:bg-gray-800 rounded-lg" : ""
             }`}
             onClick={() => handleClick("archivedNotes")}
           >
@@ -65,38 +84,38 @@ const tags =
               <ArchiveBoxArrowDownIcon
                 className={`w-4 stroke-2 ${
                   activeView === "archivedNotes"
-                    ? "stroke-blue-600"
-                    : "stroke-neutral-700"
+                    ? "stroke-blue-600 dark:stroke-blue-400"
+                    : "stroke-neutral-700 dark:stroke-gray-400"
                 }`}
               />
               <p>Archived Notes</p>
             </div>
             {activeView === "archivedNotes" && (
-              <ChevronRightIcon className="w-4 mr-3 stroke-neutral-700 stroke-3" />
+              <ChevronRightIcon className="w-4 mr-3 stroke-neutral-700 dark:stroke-gray-400 stroke-3" />
             )}
           </button>
         </div>
 
         <div className="mt-4">
-          <h1 className="text-sm font-medium text-neutral-500"> Tags </h1>
+          <h1 className="text-sm font-medium text-neutral-500 dark:text-gray-400"> Tags </h1>
           {tags.length === 0 ? (
-            <p className="text-xs text-neutral-400 mt-2">No tags yet.</p>
+            <p className="text-xs text-neutral-400 dark:text-gray-500 mt-2">No tags yet.</p>
           ) : (
             tags.map((tag) => (
               <button
                 key={tag}
                 onClick={() => handleClick(`tag:${tag}`)}
-                className={`flex items-center w-full py-2 px-3 gap-2 rounded-lg cursor-pointer hover:bg-neutral-100 ${
+                className={`flex items-center w-full py-2 px-3 gap-2 rounded-lg cursor-pointer hover:bg-neutral-100 dark:hover:bg-gray-800 ${
                   activeView === `tag:${tag}`
-                    ? "bg-neutral-100 text-neutral-950"
-                    : "text-neutral-700"
+                    ? "bg-neutral-100 dark:bg-gray-800 text-neutral-950 dark:text-gray-100"
+                    : "text-neutral-700 dark:text-gray-300"
                 }`}
               >
                 <TagIcon
                   className={`w-5 h-5 ${
                     activeView === `tag:${tag}`
-                      ? "stroke-blue-600"
-                      : "stroke-neutral-700"
+                      ? "stroke-blue-600 dark:stroke-blue-400"
+                      : "stroke-neutral-700 dark:stroke-gray-400"
                   }`}
                 />
                  <p>{tag}</p>
