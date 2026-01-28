@@ -14,12 +14,13 @@ import {
   ArrowLeftEndOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { FaPlus } from "react-icons/fa";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { openConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import { getAllNotes } from "@/store/notes";
 
 export default function Home() {
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.theme.mode);
 
   const bodyRef = useRef(null);
   const { data: sessionData } = useSession();
@@ -29,6 +30,15 @@ export default function Home() {
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  // Apply dark mode class to html element
+  useEffect(() => {
+    const html = document.documentElement;
+    html.classList.remove('dark', 'light');
+    if (theme === "dark") {
+      html.classList.add("dark");
+    }
+  }, [theme]);
 
   // Debounce search query
   useEffect(() => {
@@ -54,9 +64,9 @@ export default function Home() {
   const isLoading = isFetching || isSearching;
 
   return (
-    <div className="flex h-screen overflow-x-hidden overflow-y-visible transition-colors duration-300">
+    <div className="flex h-screen overflow-x-hidden overflow-y-visible transition-colors duration-300 bg-white dark:bg-gray-900">
       {/* Sidebar */}
-      <nav className="hidden md:block w-[17rem] p-4 text-[14px] xl:border-r border-gray-300">
+      <nav className="hidden md:block w-[17rem] p-4 text-[14px] xl:border-r border-gray-300 dark:border-gray-700">
         <SideBar
           activeView={view}
           setActiveView={setView}
@@ -66,7 +76,7 @@ export default function Home() {
       </nav>
 
       {/* Main content */}
-      <div className="flex-1 flex flex-col border-l border-gray-300 xl:border-0">
+      <div className="flex-1 flex flex-col border-l border-gray-300 dark:border-gray-700 xl:border-0">
         <TopNav
           notes={notes}
           activeView={view}
@@ -75,7 +85,7 @@ export default function Home() {
           isFormOpen={isFormOpen}
         />
 
-        <div className="flex-1 overflow-y-scroll">
+        <div className="flex-1 overflow-y-scroll bg-white dark:bg-gray-900">
           <Body
             ref={bodyRef}
             activeView={view}
@@ -100,7 +110,7 @@ export default function Home() {
               </button>
             )}
 
-            <div className="bg-gray-200 border-t border-gray-200 flex justify-between px-6 py-3 transition-colors duration-300">
+            <div className="bg-gray-200 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex justify-between px-6 py-3 transition-colors duration-300">
               {/* Home */}
               <button
                 onClick={() => setView("allNotes")}
@@ -111,7 +121,7 @@ export default function Home() {
                 }`}
               >
                 <HomeIcon className="w-5 h-5" />
-                <p className="text-xs">Home</p>
+                <p className="text-xs text-gray-900 dark:text-gray-100">Home</p>
               </button>
 
               {/* Archived */}
@@ -124,7 +134,7 @@ export default function Home() {
                 }`}
               >
                 <ArchiveBoxIcon className="w-5 h-5" />
-                <p className="text-xs">Archived</p>
+                <p className="text-xs text-gray-900 dark:text-gray-100">Archived</p>
               </button>
 
               {/* Logout */}
@@ -135,7 +145,7 @@ export default function Home() {
                 className="flex flex-col items-center cursor-pointer text-gray-500 dark:text-gray-400 transition-colors duration-300"
               >
                 <ArrowLeftEndOnRectangleIcon className="w-5 h-5" />
-                <p className="text-xs">Logout</p>
+                <p className="text-xs text-gray-900 dark:text-gray-100">Logout</p>
               </button>
             </div>
           </div>

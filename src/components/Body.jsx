@@ -160,10 +160,10 @@ export const Body = forwardRef(
     }, [activeView, hasAutoSelected, notes, loading]);
 
     return (
-      <div className="xl:flex h-full">
+      <div className="xl:flex h-full bg-white dark:bg-gray-900">
         {/* Notes List Sidebar */}
         <div
-          className={`w-full xl:w-72 border-0 xl:border-r border-gray-300 overflow-y-auto p-4
+          className={`w-full xl:w-72 border-0 xl:border-r border-gray-300 dark:border-gray-700 overflow-y-auto p-4 bg-white dark:bg-gray-900
           ${showEditor ? "hidden" : "block"} xl:block
         `}
         >
@@ -194,15 +194,15 @@ export const Body = forwardRef(
           {activeView === "archivedNotes" &&
             !loading &&
             (filteredNotes.length === 0 ? (
-              <div className="bg-neutral-100 border border-neutral-200 p-2 rounded-lg flex flex-col items-center justify-center gap-2 mt-3">
+              <div className="bg-neutral-100 dark:bg-gray-800 border border-neutral-200 dark:border-gray-700 p-2 rounded-lg flex flex-col items-center justify-center gap-2 mt-3">
                 <TaskEmpty className="w-16 h-16" />
-                <p className="text-neutral-500 text-[12px] font-normal text-center">
+                <p className="text-neutral-500 dark:text-gray-400 text-[12px] font-normal text-center">
                   No notes have been archived yet. Move notes here for
                   safekeeping.
                 </p>
               </div>
             ) : (
-              <div className="text-neutral-600 text-[14px] font-bold text-center border-2 border-dashed border-neutral-300 p-3 rounded-sm mt-3 ">
+              <div className="text-neutral-600 dark:text-gray-300 text-[14px] font-bold text-center border-2 border-dashed border-neutral-300 dark:border-gray-600 p-3 rounded-sm mt-3 ">
                 <p>
                   All your archived notes are stored here. You can restore or
                   delete them anytime.
@@ -215,15 +215,15 @@ export const Body = forwardRef(
             <div className="flex flex-col gap-y-6">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="p-2 flex flex-col gap-2 animate-pulse">
-                  <div className="h-4 bg-neutral-200 rounded w-3/4"></div>
-                  <div className="h-3 bg-neutral-200 rounded w-1/3"></div>
-                  <div className="h-3 bg-neutral-200 rounded w-1/2"></div>
-                  <div className="h-3 bg-neutral-200 rounded w-1/2"></div>
+                  <div className="h-4 bg-neutral-200 dark:bg-gray-700 rounded w-3/4"></div>
+                  <div className="h-3 bg-neutral-200 dark:bg-gray-700 rounded w-1/3"></div>
+                  <div className="h-3 bg-neutral-200 dark:bg-gray-700 rounded w-1/2"></div>
+                  <div className="h-3 bg-neutral-200 dark:bg-gray-700 rounded w-1/2"></div>
                 </div>
               ))}
             </div>
           ) : filteredNotes.length === 0 ? (
-            <p className="text-center text-neutral-500 mt-8">
+            <p className="text-center text-neutral-500 dark:text-gray-400 mt-8">
               {searchQuery ? `No notes found for "${searchQuery}"` : ""}
             </p>
           ) : (
@@ -235,17 +235,17 @@ export const Body = forwardRef(
                   className={`p-2 xl:w-[16rem] cursor-pointer mt-0 md:mt-2 flex flex-col gap-2 rounded-md transition-colors
                   ${
                     selectedNote?._id === note._id
-                      ? "xl:bg-neutral-100 hover:bg-neutral-100"
-                      : "hover:bg-neutral-100 active:bg-neutral-200"
+                      ? "xl:bg-neutral-100 xl:dark:bg-gray-800 hover:bg-neutral-100 dark:hover:bg-gray-800"
+                      : "hover:bg-neutral-100 dark:hover:bg-gray-800 active:bg-neutral-200 dark:active:bg-gray-700"
                   }`}
                 >
-                  <p className="text-[14px] font-[700] ">{note.title}</p>
+                  <p className="text-[14px] font-[700] text-gray-900 dark:text-gray-100">{note.title}</p>
                   {note.tag && (
-                    <p className="bg-neutral-200 w-fit py-1 px-1 rounded-sm text-[12px] font-[500]">
+                    <p className="bg-neutral-200 dark:bg-gray-700 w-fit py-1 px-1 rounded-sm text-[12px] font-[500] text-gray-900 dark:text-gray-100">
                       {note.tag}
                     </p>
                   )}
-                  <p className="text-[14px]">
+                  <p className="text-[14px] text-gray-700 dark:text-gray-300">
                     {new Date(note.updatedAt).toLocaleString()}
                   </p>
                 </div>
@@ -256,7 +256,7 @@ export const Body = forwardRef(
 
         {/* Note Editor */}
         <div
-          className={`flex-1 p-4 border-gray-300 xl:border-0 ${
+          className={`flex-1 p-4 border-gray-300 dark:border-gray-700 xl:border-0 bg-white dark:bg-gray-900 ${
             showEditor ? "block" : "hidden"
           } xl:block`}
         >
@@ -265,7 +265,7 @@ export const Body = forwardRef(
               onSubmit={saveNotes}
               className={` ${!selectedNote ? "pb-18 md:pb-0" : ""}`}
             >
-              <div className="border-b-1 border-gray-300 pb-3">
+              <div className="border-b-1 border-gray-300 dark:border-gray-700 pb-3">
                 {/* Back button for small screens */}
                 <button
                   type="button"
@@ -288,12 +288,12 @@ export const Body = forwardRef(
                   placeholder="Enter a title..."
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full text-[2rem] outline-0 border-b-1 border-transparent focus:border-gray-200"
+                  className="w-full text-[2rem] outline-0 border-b-1 border-transparent focus:border-gray-200 dark:focus:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100"
                 />
                 <div className="flex gap-[4rem] mt-4">
                   <div className="flex items-center gap-1">
                     <TagIcon className="w-5 h-5 stroke-2" />
-                    <p className="text-neutral-700 text-sm font-[500]">Tags</p>
+                    <p className="text-neutral-700 dark:text-gray-300 text-sm font-[500]">Tags</p>
                   </div>
                   <input
                     disabled={activeView === "archivedNotes"}
@@ -301,13 +301,13 @@ export const Body = forwardRef(
                     value={tag}
                     onChange={(e) => setTag(e.target.value)}
                     placeholder="Add tags separated by commas"
-                    className="font-[500] w-full text-[14px] outline-0 border-b-1 border-transparent focus:border-gray-200"
+                    className="font-[500] w-full text-[14px] outline-0 border-b-1 border-transparent focus:border-gray-200 dark:focus:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100"
                   />
                 </div>
                 <div className="flex gap-[1.5rem] mt-3">
                   <div className="flex items-center gap-1">
                     <ClockIcon className="w-5 h-5 stroke-2" />
-                    <p className="text-neutral-700 text-sm font-[500]">
+                    <p className="text-neutral-700 dark:text-gray-300 text-sm font-[500]">
                       Last edited
                     </p>
                   </div>
@@ -315,7 +315,7 @@ export const Body = forwardRef(
                     type="text"
                     disabled
                     size={46}
-                    className="text-sm disabled:bg-transparent"
+                    className="text-sm disabled:bg-transparent text-gray-700 dark:text-gray-300"
                     value={
                       selectedNote?.updatedAt
                         ? new Date(selectedNote.updatedAt).toLocaleString()
@@ -332,12 +332,12 @@ export const Body = forwardRef(
                 placeholder="Start typing your note here..."
                 className={`${
                   activeView === "archivedNotes"
-                    ? "border-1 border-gray-300 p-2"
-                    : "focus:p-2 focus:border-1 focus:border-gray-300"
-                } w-full mt-3 mb-2 h-[22rem] resize-none focus:outline-none`}
+                    ? "border-1 border-gray-300 dark:border-gray-600 p-2"
+                    : "focus:p-2 focus:border-1 focus:border-gray-300 dark:focus:border-gray-600"
+                } w-full mt-3 mb-2 h-[22rem] resize-none focus:outline-none bg-transparent text-gray-900 dark:text-gray-100`}
               />
 
-              <div className=" border-t-1 border-t-gray-200 pt-[1rem] flex gap-4">
+              <div className=" border-t-1 border-t-gray-200 dark:border-t-gray-700 pt-[1rem] flex gap-4">
                 <div className="max-w-2xs flex gap-4">
                   {activeView === "allNotes" && (
                     <button
@@ -372,7 +372,7 @@ export const Body = forwardRef(
                     className={`${
                       activeView === "archivedNotes"
                         ? "bg-blue-700 text-white"
-                        : "bg-gray-200"
+                        : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
                     } font-bold px-[14px] py-[12px] text-[14px] rounded-sm cursor-pointer`}
                   >
                     {activeView === "archivedNotes" ? "Close" : "Cancel"}
@@ -383,12 +383,12 @@ export const Body = forwardRef(
           ) : (
             !loading &&
             (filteredNotes.length === 0 ? (
-              <p className="text-center text-[14px] text-gray-700 font-[600] hidden xl:block">
+              <p className="text-center text-[14px] text-gray-700 dark:text-gray-300 font-[600] hidden xl:block">
                 You don't have any notes available in this tab. Start a new note
                 to capture your thoughts and ideas.
               </p>
             ) : (
-              <p className="text-center text-[14px] text-gray-700 font-[600] hidden md:block">
+              <p className="text-center text-[14px] text-gray-700 dark:text-gray-300 font-[600] hidden md:block">
                 Select a note to view or edit it.
               </p>
             ))
@@ -400,7 +400,7 @@ export const Body = forwardRef(
           <aside
             className={`  ${
               showEditor ? "block" : "hidden"
-            } xl:block xl:w-72 p-4 border-t border-l-0 xl:border-l-1 xl:border-t-0 border-gray-300 pb-20 md:pb-0`}
+            } xl:block xl:w-72 p-4 border-t border-l-0 xl:border-l-1 xl:border-t-0 border-gray-300 dark:border-gray-700 pb-20 md:pb-0 bg-white dark:bg-gray-900`}
           >
             <NoteActions
               activeView={activeView}
