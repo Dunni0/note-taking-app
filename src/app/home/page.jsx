@@ -17,19 +17,27 @@ import { FaPlus } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { openConfirmModal } from "@/store/modals/ConfirmModalSlice";
 import { getAllNotes } from "@/store/notes";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const dispatch = useDispatch();
+  const router = useRouter();
   const theme = useSelector((state) => state.theme.mode);
 
   const bodyRef = useRef(null);
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
 
   const [view, setView] = useState("allNotes");
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+
+  useEffect(() => {    
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   // Apply dark mode class to html element
   useEffect(() => {
