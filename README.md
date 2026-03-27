@@ -1,20 +1,40 @@
 # Note Taking App 🗒️
 
-A full-stack note-taking app built with Next.js and MongoDB. Write, organise, search, tag, and archive your notes — all behind a secure authentication layer.
+Your thoughts, organised. Write, tag, search, and archive your notes — all in one place.
 
 **Live demo → [note-taking-app-two-beta.vercel.app](https://note-taking-app-two-beta.vercel.app)**
 
 ---
 
-## Features
+## What you can do
 
-- 🔐 **Authentication** — register, login, and logout securely via NextAuth
-- ✏️ **Full CRUD** — create, edit, and delete notes
-- 🗄️ **Archive & restore** — keep things tidy without losing anything permanently
-- 🏷️ **Tags** — attach multiple tags to any note for better organisation
-- 🔍 **Search** — find notes instantly by title, content, or tag
-- 🛡️ **Confirmation modals** — no accidental deletes
-- 🗃️ **Redux state management** — predictable, centralised global state
+- 🔐 **Sign in securely** — your notes are private to you, always
+- ✏️ **Write freely** — create, edit, and delete notes without friction
+- 🏷️ **Stay organised with tags** — attach multiple tags to any note and filter by them instantly
+- 🔍 **Find anything fast** — search across titles, content, and tags at once
+- 🗄️ **Archive instead of delete** — tuck notes away without losing them permanently, restore anytime
+- 🛡️ **No accidental deletions** — confirmation modals on every destructive action
+
+---
+
+## Install as an app
+
+Note Taking App works as a Progressive Web App (PWA) — save it to your device and use it like a native app, no app store needed.
+
+**On desktop (Chrome / Edge):**
+1. Open the live demo in Chrome or Edge
+2. Look for the install icon (⊕) in the address bar on the right
+3. Click **Install**
+
+**On Android (Chrome):**
+1. Open the live demo in Chrome
+2. Tap the three-dot menu (⋮) in the top right
+3. Tap **Add to Home screen** → **Add**
+
+**On iOS (Safari):**
+1. Open the live demo in Safari
+2. Tap the share icon (□↑) at the bottom
+3. Tap **Add to Home Screen** → **Add**
 
 ---
 
